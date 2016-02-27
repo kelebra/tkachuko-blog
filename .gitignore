@@ -11,4 +11,4 @@ project/boot/
 /out/
 .idea_modules/
 project/target
-
+*/target
