@@ -9,7 +9,7 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   "Database" should {
 
     "be able to persist and retrieve persisted record" in {
-      val post = Post(content = "my blog post")
+      val post = Post(content = "content")
       Database.save(post)
       Database.query[Post].fetch() should not be empty
     }

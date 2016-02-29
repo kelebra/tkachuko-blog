@@ -6,4 +6,4 @@ lazy val dbAccess = (project in file("db-access")).settings(dbAccessSettings: _*
 
 lazy val models = (project in file("models")).settings(modelsSettings: _*)
 
-lazy val backend = (project in file("backend")).settings(commonSettings: _*)
+lazy val backend = (project in file("backend")).settings(backendSettings: _*).dependsOn(dbAccess)
