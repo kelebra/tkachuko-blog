@@ -1,10 +1,12 @@
-# Build Environment
 build_environment: ubuntu1204
+
 language: scala
-scala:
-   - 2.11.6
+
 jdk:
   - oraclejdk8
+
+scala:
+   - 2.11.6
 
 script:
   - sbt ++$SHIPPABLE_SCALA_VERSION clean test
