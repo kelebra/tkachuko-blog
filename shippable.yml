@@ -3,13 +3,13 @@ build_environment: ubuntu1204
 language: scala
 
 jdk:
-  - oraclejdk8
+- oraclejdk8
 
 scala:
-   - 2.11.6
+- 2.11.6
 
 script:
-  - sbt ++$SHIPPABLE_SCALA_VERSION clean test
+- sbt ++$SHIPPABLE_SCALA_VERSION clean test
 
 notifications:
      email:
