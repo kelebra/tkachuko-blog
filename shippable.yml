@@ -1,0 +1,17 @@
+# Build Environment
+build_environment: ubuntu1204
+language: scala
+scala:
+   - 2.11.6
+jdk:
+  - oraclejdk8
+
+script:
+  - sbt ++$SHIPPABLE_SCALA_VERSION clean test
+
+notifications:
+     email:
+         recipients:
+             - kelebra20@gmail.com
+         on_success: change
+         on_failure: always
