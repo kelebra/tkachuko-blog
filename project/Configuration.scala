@@ -1,4 +1,5 @@
 import Dependencies._
+import org.scoverage.coveralls.Imports.CoverallsKeys._
 import sbt.Keys._
 import sbt._
 
@@ -13,7 +14,8 @@ object Configuration {
       sbtVersion := Versions.sbt,
       libraryDependencies ++= Seq(scalaTest),
       parallelExecution in Test := false,
-      dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value
+      dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
+      coverallsToken := Some("BnKklcH3fqZnPMVeBSpNg23t9S0VJPcZG")
     )
 
   lazy val modelsSettings = commonSettings
@@ -26,10 +28,7 @@ object Configuration {
     libraryDependencies ++= Seq(http, testkit)
   }
 
-  lazy val rootSettings = commonSettings :+ {
-    import org.scoverage.coveralls.Imports.CoverallsKeys._
-    coverallsToken := Some("BnKklcH3fqZnPMVeBSpNg23t9S0VJPcZG")
-  }
+  lazy val rootSettings = commonSettings
 
   object Versions {
     val scala = "2.11.7"
