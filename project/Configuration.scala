@@ -26,6 +26,11 @@ object Configuration {
     libraryDependencies ++= Seq(http, testkit)
   }
 
+  lazy val rootSettings = commonSettings :+ {
+    import org.scoverage.coveralls.Imports.CoverallsKeys._
+    coverallsToken := Some("BnKklcH3fqZnPMVeBSpNg23t9S0VJPcZG")
+  }
+
   object Versions {
     val scala = "2.11.7"
     val scalaBinary = "2.11"
@@ -41,5 +46,5 @@ object Dependencies {
   val h2: ModuleID = "com.h2database" % "h2" % "1.3.168" % "test"
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.0"
   val http: ModuleID = "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2"
-  val testkit : ModuleID = "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.4.2-RC3"
+  val testkit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.4.2-RC3"
 }
