@@ -17,6 +17,7 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
     Server.createTcpServer("-tcpAllowOthers").start()
+    Database.initialize()
     Database.save(Post(id = id, title = "title", content = "content"))
   }
 }

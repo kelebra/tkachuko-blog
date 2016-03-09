@@ -37,6 +37,7 @@ class RoutesSpec extends WordSpec with Matchers with ScalatestRouteTest {
 
   override protected def beforeAll(): Unit = {
     Server.createTcpServer("-tcpAllowOthers").start()
+    Database.initialize()
     Database.save(BlogPost(1, "title", "content"))
     Database.save(BlogPost(2, "title other", "content"))
   }
