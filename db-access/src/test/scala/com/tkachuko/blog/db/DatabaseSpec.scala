@@ -6,14 +6,17 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 
 class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
+  val id = System.currentTimeMillis()
+
   "Database" should {
 
-    "be able to persist and retrieve persisted record" in {
-      val post = Post(content = "content")
-      Database.save(post)
-      Database.query[Post].fetch() should not be empty
+    "retrieve persisted record by id" in {
+      Database.Posts.findById(id) should be('defined)
     }
   }
 
-  override protected def beforeAll(): Unit = Server.createTcpServer("-tcpAllowOthers").start()
+  override protected def beforeAll(): Unit = {
+    Server.createTcpServer("-tcpAllowOthers").start()
+    Database.save(Post(id = id, title = "title", content = "content"))
+  }
 }

@@ -6,7 +6,13 @@ object StaticDataResolver {
 
   val resourcePrefix = "pages"
 
+  val blog = "blog"
+
+  val posts = "posts"
+
   val homePage = "index.html".asWebResource
+
+  val blogPage = "blog.html".asWebResource
 
   implicit class WebResource(path: String) {
 

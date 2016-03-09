@@ -21,11 +21,11 @@ object Configuration {
   lazy val modelsSettings = commonSettings
 
   lazy val dbAccessSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(typesafeConfig, h2, sorm)
+    libraryDependencies ++= Seq(typesafeConfig, h2, orm)
   }
 
   lazy val backendSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(http, testkit)
+    libraryDependencies ++= Seq(http, testkit, json, h2)
   }
 
   lazy val rootSettings = commonSettings
@@ -41,9 +41,10 @@ object Configuration {
 object Dependencies {
 
   val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "2.2.4" % "test"
-  val sorm: ModuleID = "org.sorm-framework" % "sorm" % "0.3.19"
+  val orm: ModuleID = "org.skinny-framework" %% "skinny-orm" % "2.0.7"
   val h2: ModuleID = "com.h2database" % "h2" % "1.3.168" % "test"
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.0"
   val http: ModuleID = "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2"
+  val json: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.2"
   val testkit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.4.2-RC3"
 }
