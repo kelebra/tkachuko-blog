@@ -36,10 +36,12 @@ object WebServer {
     val binding = Http()
       .bindAndHandle(routes, args(0), args(1).toInt)
 
-    binding
-      .onFailure { case e: Exception =>
-      println(e)
-      system.terminate()
+    Database.initialize()
+
+    binding.onFailure {
+      case e: Exception =>
+        println(e)
+        system.terminate()
     }
   }
 }

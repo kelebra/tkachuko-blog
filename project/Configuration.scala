@@ -25,7 +25,7 @@ object Configuration {
   }
 
   lazy val backendSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(http, testkit, json, h2)
+    libraryDependencies ++= Seq(http, testkit, json, h2, postgres)
   }
 
   lazy val rootSettings = commonSettings
@@ -42,6 +42,7 @@ object Dependencies {
 
   val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   val orm: ModuleID = "org.skinny-framework" %% "skinny-orm" % "2.0.7"
+  val postgres = "org.postgresql" % "postgresql" % "9.4.1208"
   val h2: ModuleID = "com.h2database" % "h2" % "1.3.168" % "test"
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.0"
   val http: ModuleID = "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2"

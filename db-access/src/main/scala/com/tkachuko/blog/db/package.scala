@@ -13,13 +13,14 @@ package object db {
 
   object Database {
 
-    DBSettings.initialize()
-
     implicit val session = AutoSession
 
-    if (init) {
-      sql"drop table if exists POSTS;".execute().apply()
-      sql"create table POSTS (id serial, title varchar(50), content varchar(100000));".execute().apply()
+    def initialize(): Unit = {
+      DBSettings.initialize()
+      if (init) {
+        sql"drop table if exists POSTS;".execute().apply()
+        sql"create table POSTS (id serial, title varchar(50), content varchar(100000));".execute().apply()
+      }
     }
 
     object Posts extends SkinnyCRUDMapper[Post] {
@@ -27,7 +28,7 @@ package object db {
       override def defaultAlias: Alias[Post] = createAlias("p")
 
       override def extract(rs: WrappedResultSet, n: scalikejdbc.ResultName[Post]): Post =
-        Post(rs.long("id"), rs.string("title"), rs.string("content"))
+        Post(rs.long(n.id), rs.string(n.title), rs.string(n.content))
 
       override def tableName: String = "POSTS"
     }
