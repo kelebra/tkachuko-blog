@@ -33,8 +33,7 @@ object WebServer {
     }
 
   def main(args: Array[String]): Unit = {
-    val binding = Http()
-      .bindAndHandle(routes, args(0), args(1).toInt)
+    val binding = Http().bindAndHandle(routes, args(0), args(1).toInt)
 
     Database.initialize()
 

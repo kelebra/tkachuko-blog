@@ -8,7 +8,7 @@ object Configuration {
   lazy val commonSettings =
     Seq(
       organization := "com.tkachuko.blog",
-      version := "0.1-SNAPSHOT",
+      version := "1.0",
       scalaVersion := Versions.scala,
       scalaBinaryVersion := Versions.scalaBinary,
       sbtVersion := Versions.sbt,
