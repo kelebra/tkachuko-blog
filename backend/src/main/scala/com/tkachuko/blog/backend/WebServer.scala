@@ -28,7 +28,7 @@ object WebServer {
           blogPage
         } ~
         path(posts) {
-          complete(Database.Posts.findAllModels().toJson)
+          complete(Database.Posts.findAllModels().sortBy(-_.id).toJson)
         }
     }
 

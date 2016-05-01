@@ -14,6 +14,8 @@ object StaticDataResolver {
 
   val blogPage = "blog.html".asWebResource
 
+  val adminPage = "admin.html".asWebResource
+
   implicit class WebResource(val path: String) extends AnyVal {
 
     def asWebResource = getFromResource(s"$resourcePrefix/$path")
