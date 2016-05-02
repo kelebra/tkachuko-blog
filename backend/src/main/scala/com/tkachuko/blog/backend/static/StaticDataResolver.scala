@@ -10,6 +10,8 @@ object StaticDataResolver {
 
   val posts = "posts"
 
+  val admin = "admin"
+
   val homePage = "index.html".asWebResource
 
   val blogPage = "blog.html".asWebResource

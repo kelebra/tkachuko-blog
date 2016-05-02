@@ -1,0 +1,79 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin panel to add posts to blog">
+
+    <title>Admin &ndash; Oleksii Tkachuk &ndash;</title>
+
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+
+    <!--[if lte IE 8]>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
+
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+
+    <!--<![endif]-->
+
+    <link rel="stylesheet" href="/pages/css/admin.css">
+
+    <script src="http://code.jquery.com/jquery-2.2.1.min.js"></script>
+
+    <script src="/pages/js/admin.js"></script>
+</head>
+<body>
+
+<div id="layout">
+
+    <div class="header">
+        <h1>If you will not share it, you cannot use it.</h1>
+
+        <h2>Ursula K. Le Guin, The Dispossessed</h2>
+    </div>
+
+    <div class="pure-g">
+        <fieldset>
+            <button id="preview" class="pure-button pure-button-primary" onclick="preview()">
+                <i class="fa fa-eye"></i>
+                Preview
+            </button>
+            <button id="code" class="pure-button pure-button-primary" onclick="code()">
+                <i class="fa fa-code"></i>
+                Code
+            </button>
+            <button id="save" class="pure-button pure-button-primary">
+                <i class="fa fa-code"></i>
+                Save post
+            </button>
+        </fieldset>
+    </div>
+
+    <div class="content">
+        <textarea id="codeEditor">
+<section class='post'>
+    <header class='post-header'><img class='post-avatar' alt='Oleksii Tkachuk&#x27;s avatar' height='48'
+                                     width='48' src='/pages/img/profile.png'>
+
+        <h2 class='post-title'>Blog is under development</h2>
+
+        <p class='post-meta'>By <a href='#' class='post-author'>Oleksii Tkachuk</a> under <a
+                class='post-category post-category-design' href='#'>java</a> <a
+                class='post-category post-category-pure' href='#'>scala</a></p>
+    </header>
+    <div class='post-description'>
+        <!-- POST CONTENT HERE-->
+    </div>
+</section>
+        </textarea>
+    </div>
+</div>
+
+
+</body>
+</html>

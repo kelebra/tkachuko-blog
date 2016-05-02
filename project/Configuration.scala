@@ -15,7 +15,8 @@ object Configuration {
       libraryDependencies ++= Seq(scalaTest),
       parallelExecution in Test := false,
       dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-      coverallsToken := Some("BnKklcH3fqZnPMVeBSpNg23t9S0VJPcZG")
+      coverallsToken := Some("BnKklcH3fqZnPMVeBSpNg23t9S0VJPcZG"),
+      resolvers ++= Seq("RoundEights" at "http://maven.spikemark.net/roundeights")
     )
 
   lazy val modelsSettings = commonSettings
@@ -25,7 +26,7 @@ object Configuration {
   }
 
   lazy val backendSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(http, testkit, json, h2, postgres)
+    libraryDependencies ++= Seq(http, testkit, json, h2, postgres, hash)
   }
 
   lazy val rootSettings = commonSettings
@@ -47,5 +48,6 @@ object Dependencies {
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.0"
   val http: ModuleID = "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2"
   val json: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.2"
+  val hash: ModuleID = "com.roundeights" %% "hasher" % "1.2.0"
   val testkit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.4.2-RC3"
 }
