@@ -4,11 +4,12 @@ function BlogControl(headingElement, postsElement) {
         clear();
         $.get("/posts", function(data) {
             $.each(data, function(index, value){
-                postsElement.append(render(value));
+                // TODO: it has to be reworked after schema remodelling
+                postsElement.append(preview(value));
             })
             Prism.highlightAll();
         });
-        header('All posts')
+        header('All posts');
     };
 
     this.post = function(id) {
@@ -35,9 +36,15 @@ function BlogControl(headingElement, postsElement) {
         return html;
     };
 
+    function preview(json) {
+        var rendered = render(json);
+        rendered.children('.post-description').remove();
+        return rendered;
+    };
+
     function header(text) {
         headingElement.text(text);
-    }
+    };
 };
 
 var blogControl;
