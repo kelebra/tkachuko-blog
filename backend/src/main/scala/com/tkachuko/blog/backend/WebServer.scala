@@ -5,7 +5,6 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import com.roundeights.hasher.Implicits._
 import com.tkachuko.blog.backend.json.PostJsonSupport._
 import com.tkachuko.blog.backend.static.StaticDataResolver._
 import com.tkachuko.blog.db.Database
@@ -31,9 +30,8 @@ object WebServer {
         path(posts) {
           complete(Database.Posts.findAllModels().sortBy(-_.id).toJson)
         } ~
-        path(admin / Rest) { secretHash =>
-          if (secretHash.sha1.hex == system.settings.config.getString("admin.hash")) adminPage
-          else homePage
+        path(postById / LongNumber) { id =>
+          complete(Database.Posts.findById(id).toJson)
         }
     }
 

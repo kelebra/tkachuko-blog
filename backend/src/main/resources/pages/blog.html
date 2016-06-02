@@ -33,7 +33,7 @@
     <!-- Prism (code highlight) dependencies-->
     <link href="/pages/css/syntax.css" rel="stylesheet"/>
     <script src="/pages/js/syntax.js"></script>
-
+    <script src="/pages/js/blog.js"></script>
 </head>
 <body>
 
@@ -62,19 +62,7 @@
         <div>
             <!-- A wrapper for all the blog posts -->
             <div class="posts">
-                <h1 class="content-subhead">All posts</h1>
-
-                <script>
-                    var parent = $('.posts');
-                    $.get("/posts", function(data) {
-                        $.each(data, function(index, value){
-                            var html = $.parseHTML(value.content);
-                            parent.append(html);
-                        })
-                        Prism.highlightAll();
-                    });
-
-                </script>
+                <h1 id='heading' class="content-subhead">All posts</h1>
             </div>
         </div>
     </div>

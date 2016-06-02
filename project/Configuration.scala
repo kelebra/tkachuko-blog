@@ -26,7 +26,7 @@ object Configuration {
   }
 
   lazy val backendSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(http, testkit, json, h2, postgres, hash)
+    libraryDependencies ++= Seq(http, testkit, json, h2, postgres)
   }
 
   lazy val rootSettings = commonSettings
@@ -48,6 +48,5 @@ object Dependencies {
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.0"
   val http: ModuleID = "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2"
   val json: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.2"
-  val hash: ModuleID = "com.roundeights" %% "hasher" % "1.2.0"
   val testkit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.4.2-RC3"
 }

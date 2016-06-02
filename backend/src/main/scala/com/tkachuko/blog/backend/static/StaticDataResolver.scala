@@ -10,13 +10,13 @@ object StaticDataResolver {
 
   val posts = "posts"
 
+  val postById = "post"
+
   val admin = "admin"
 
   val homePage = "index.html".asWebResource
 
   val blogPage = "blog.html".asWebResource
-
-  val adminPage = "admin.html".asWebResource
 
   implicit class WebResource(val path: String) extends AnyVal {
 

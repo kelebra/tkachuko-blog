@@ -33,6 +33,14 @@ class RoutesSpec extends WordSpec with Matchers with ScalatestRouteTest {
         responseAs[String] should not be empty
       }
     }
+
+    "return single post as json for GET to the /post/id" in {
+      Get(s"/$postById/1") ~> routes ~> check {
+        status === StatusCodes.Success
+        println(responseAs[String])
+        responseAs[String] should not be empty
+      }
+    }
   }
 
   override protected def beforeAll(): Unit = {
