@@ -4,8 +4,7 @@ function BlogControl(headingElement, postsElement) {
         clear();
         $.get("/posts", function(data) {
             $.each(data, function(index, value){
-                // TODO: it has to be reworked after schema remodelling
-                postsElement.append(preview(value));
+                postsElement.append(render(value));
             })
             Prism.highlightAll();
         });
@@ -34,12 +33,6 @@ function BlogControl(headingElement, postsElement) {
             blogControl.post(id);
         });
         return html;
-    };
-
-    function preview(json) {
-        var rendered = render(json);
-        rendered.children('.post-description').remove();
-        return rendered;
     };
 
     function header(text) {
