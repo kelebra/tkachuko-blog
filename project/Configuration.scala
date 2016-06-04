@@ -16,17 +16,20 @@ object Configuration {
       parallelExecution in Test := false,
       dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       coverallsToken := Some("BnKklcH3fqZnPMVeBSpNg23t9S0VJPcZG"),
-      resolvers ++= Seq("RoundEights" at "http://maven.spikemark.net/roundeights")
+      resolvers ++= Seq(
+        "RoundEights" at "http://maven.spikemark.net/roundeights",
+        "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+      )
     )
 
   lazy val modelsSettings = commonSettings
 
   lazy val dbAccessSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(typesafeConfig, h2, orm)
+    libraryDependencies ++= Seq(typesafeConfig, mongo, embedMongo, slf4j)
   }
 
   lazy val backendSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(http, testkit, json, h2, postgres)
+    libraryDependencies ++= Seq(http, testkit, json)
   }
 
   lazy val rootSettings = commonSettings
@@ -42,9 +45,9 @@ object Configuration {
 object Dependencies {
 
   val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "2.2.4" % "test"
-  val orm: ModuleID = "org.skinny-framework" %% "skinny-orm" % "2.0.7"
-  val postgres = "org.postgresql" % "postgresql" % "9.4.1208"
-  val h2: ModuleID = "com.h2database" % "h2" % "1.3.168" % "test"
+  val mongo: ModuleID = "org.reactivemongo" %% "reactivemongo" % "0.11.11"
+  val embedMongo = "com.github.simplyscala" %% "scalatest-embedmongo" % "0.2.3-SNAPSHOT"
+  val slf4j: ModuleID = "org.slf4j" % "slf4j-api" % "1.7.21"
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.0"
   val http: ModuleID = "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2"
   val json: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.2"

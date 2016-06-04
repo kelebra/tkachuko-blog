@@ -2,39 +2,45 @@ package com.tkachuko.blog
 
 import com.tkachuko.blog.models.Post
 import com.typesafe.config.ConfigFactory
-import scalikejdbc.{AutoSession, WrappedResultSet, _}
-import skinny.DBSettings
-import skinny.orm.{Alias, SkinnyCRUDMapper}
+import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.{MongoConnection, MongoDriver}
+import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, Macros}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.Success
 
 package object db {
 
-  val config = ConfigFactory.load("application.conf")
-  val init = config.getBoolean("development.init")
+  val config = ConfigFactory.load("db.conf")
+  val name = config.getString("db.name")
 
   object Database {
 
-    implicit val session = AutoSession
+    val driver = new MongoDriver
+    val uri = config.getString("db.uri")
 
-    def initialize(): Unit = {
-      DBSettings.initialize()
-      if (init) {
-        sql"drop table if exists POSTS;".execute().apply()
-        sql"create table POSTS (id serial, title varchar(50), content varchar(100000));".execute().apply()
-      }
+    object Posts {
+
+      val collection: Future[BSONCollection] = connection.map(_ ("posts"))
+
+      implicit val reader: BSONDocumentReader[Post] = Macros.reader[Post]
+      implicit val writer: BSONDocumentWriter[Post] = Macros.writer[Post]
+
+      def all(): Future[List[Post]] =
+        collection.flatMap(_.find(BSONDocument()).cursor[Post]().collect[List]())
+
+      def insert(post: Post): Future[WriteResult] = collection.flatMap(_.insert(post))
+
+      def findByTitle(title: String): Future[Option[Post]] =
+        collection.flatMap(_.find(BSONDocument("title" -> title)).one[Post])
     }
 
-    object Posts extends SkinnyCRUDMapper[Post] {
-
-      override def defaultAlias: Alias[Post] = createAlias("p")
-
-      override def extract(rs: WrappedResultSet, n: scalikejdbc.ResultName[Post]): Post =
-        Post(rs.long(n.id), rs.string(n.title), rs.string(n.content))
-
-      override def tableName: String = "POSTS"
+    lazy val connection = MongoConnection.parseURI(uri) match {
+      case Success(parsedUri) => driver.connection(parsedUri).database(name)
+      case _ => throw new IllegalArgumentException(s"Invalid mongo URI specifier: $uri")
     }
-
-    def save(post: Post) =
-      sql"insert into POSTS (id, title, content) values(${post.id}, ${post.title}, ${post.content});".execute().apply()
   }
 
 }

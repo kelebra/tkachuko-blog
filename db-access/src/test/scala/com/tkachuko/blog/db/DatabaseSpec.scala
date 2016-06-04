@@ -1,23 +1,31 @@
 package com.tkachuko.blog.db
 
 import com.tkachuko.blog.models.Post
-import org.h2.tools.Server
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
+
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
-  val id = System.currentTimeMillis()
-
   "Database" should {
 
-    "retrieve persisted record by id" in {
-      Database.Posts.findById(id) should be('defined)
+    "retrieve all records" in {
+      Database.Posts.all().await should not be empty
     }
   }
 
   override protected def beforeAll(): Unit = {
-    Server.createTcpServer("-tcpAllowOthers").start()
-    Database.initialize()
-    Database.save(Post(id = id, title = "title", content = "content"))
+    InMemoryMongo.start()
+    Database.Posts.insert(Post("Title1", "Hello!")).await
   }
+
+  override def afterAll(): Unit = InMemoryMongo.stop()
+
+  implicit class Awaitable[T](future: Future[T]) {
+
+    def await: T = Await.result(future, 5 seconds)
+  }
+
 }

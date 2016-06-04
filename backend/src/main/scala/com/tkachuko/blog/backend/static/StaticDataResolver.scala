@@ -10,7 +10,7 @@ object StaticDataResolver {
 
   val posts = "posts"
 
-  val postById = "post"
+  val postByTitle = "post"
 
   val admin = "admin"
 

@@ -28,17 +28,15 @@ object WebServer {
           blogPage
         } ~
         path(posts) {
-          complete(Database.Posts.findAllModels().sortBy(-_.id).toJson)
+          complete(Database.Posts.all().map(_.toJson))
         } ~
-        path(postById / LongNumber) { id =>
-          complete(Database.Posts.findById(id).toJson)
+        path(postByTitle / Rest) { title =>
+          complete(Database.Posts.findByTitle(title).map(_.toJson))
         }
     }
 
   def main(args: Array[String]): Unit = {
     val binding = Http().bindAndHandle(routes, args(0), args(1).toInt)
-
-    Database.initialize()
 
     binding.onFailure {
       case e: Exception =>

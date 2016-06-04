@@ -26,11 +26,11 @@ function BlogControl(headingElement, postsElement) {
 
     function render(json) {
         var html = $(json.content);
-        var id = json.id;
+        var title = json.title;
         var heading = html.find('h2').first();
         heading.attr('style', 'cursor: pointer');
         heading.click(function() {
-            blogControl.post(id);
+            blogControl.post(title);
         });
         return html;
     };
