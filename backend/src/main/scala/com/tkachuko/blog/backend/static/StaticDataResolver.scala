@@ -12,7 +12,7 @@ object StaticDataResolver {
 
   val postByTitle = "post"
 
-  val admin = "admin"
+  val subscribe = "subscribe"
 
   val homePage = "index.html".asWebResource
 

@@ -39,6 +39,13 @@ class RoutesSpec extends WordSpec with Matchers with ScalatestRouteTest {
         responseAs[String] should not be empty
       }
     }
+
+    "return true or false after subscription via the /subscribe" in {
+      Get(s"/$subscribe/email") ~> routes ~> check {
+        status === StatusCodes.Success
+        responseAs[String] shouldBe "true"
+      }
+    }
   }
 
   override protected def beforeAll(): Unit = {

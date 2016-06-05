@@ -3,7 +3,7 @@ package com.tkachuko.blog.backend.json
 import com.tkachuko.blog.models.Post
 import spray.json._
 
-object PostJsonSupport extends DefaultJsonProtocol {
+object JsonSupport extends DefaultJsonProtocol {
 
-  implicit val jsonFormat = jsonFormat3(Post)
+  implicit val postJsonFormat = jsonFormat4(Post)
 }

@@ -1,6 +1,6 @@
 package com.tkachuko.blog.db
 
-import com.tkachuko.blog.models.Post
+import com.tkachuko.blog.models.{Post, Subscription}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 
 import scala.concurrent.duration._
@@ -11,14 +11,28 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
   "Database" should {
 
-    "retrieve all records" in {
-      Database.Posts.all().await should not be empty
+    "retrieve all posts" in {
+      Database.Posts.all().await.size shouldBe 3
     }
+
+    "retrieve post with tags" in {
+      Database.Posts.findByTitle("Title3").await.getOrElse(
+        throw new RuntimeException("Inserted post was not found")
+      ).tags should not be empty
+    }
+
+    "retrieve all subscriptions" in {
+      Database.Subscriptions.count().await shouldBe 1
+    }
+
   }
 
   override protected def beforeAll(): Unit = {
     InMemoryMongo.start()
     Database.Posts.insert(Post("Title1", "Hello!")).await
+    Database.Posts.insert(Post("Title2", "Hello!")).await
+    Database.Posts.insert(Post("Title3", "Hello!", List("akka", "scala"))).await
+    Database.Subscriptions.insert(Subscription("mymail")).await
   }
 
   override def afterAll(): Unit = InMemoryMongo.stop()

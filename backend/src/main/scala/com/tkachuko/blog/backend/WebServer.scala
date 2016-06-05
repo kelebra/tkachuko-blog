@@ -5,9 +5,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import com.tkachuko.blog.backend.json.PostJsonSupport._
+import com.tkachuko.blog.backend.json.JsonSupport._
 import com.tkachuko.blog.backend.static.StaticDataResolver._
 import com.tkachuko.blog.db.Database
+import com.tkachuko.blog.models.Subscription
 import spray.json._
 
 object WebServer {
@@ -32,6 +33,11 @@ object WebServer {
         } ~
         path(postByTitle / Rest) { title =>
           complete(Database.Posts.findByTitle(title).map(_.toJson))
+        } ~
+        path(subscribe / Rest) { email =>
+          complete(
+            Database.Subscriptions.insert(Subscription(email)).map(_.ok.toString)
+          )
         }
     }
 

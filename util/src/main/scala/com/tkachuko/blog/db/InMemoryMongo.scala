@@ -22,3 +22,4 @@ object InMemoryMongo {
   def stop() = mongod.stop()
 
 }
+

@@ -25,7 +25,11 @@ object Configuration {
   lazy val modelsSettings = commonSettings
 
   lazy val dbAccessSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(typesafeConfig, mongo, embedMongo, slf4j)
+    libraryDependencies ++= Seq(typesafeConfig, mongo)
+  }
+
+  lazy val utilSettings = commonSettings :+ {
+    libraryDependencies ++= Seq(typesafeConfig, embedMongo, slf4j)
   }
 
   lazy val backendSettings = commonSettings :+ {
