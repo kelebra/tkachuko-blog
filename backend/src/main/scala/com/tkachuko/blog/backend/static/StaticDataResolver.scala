@@ -10,9 +10,11 @@ object StaticDataResolver {
 
   val posts = "posts"
 
-  val postById = "post"
+  val postByTitle = "post"
 
-  val admin = "admin"
+  val postsByTags = "tags"
+
+  val subscribe = "subscribe"
 
   val homePage = "index.html".asWebResource
 

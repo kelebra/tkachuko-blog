@@ -5,9 +5,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import com.tkachuko.blog.backend.json.PostJsonSupport._
+import com.tkachuko.blog.backend.json.JsonSupport._
 import com.tkachuko.blog.backend.static.StaticDataResolver._
 import com.tkachuko.blog.db.Database
+import com.tkachuko.blog.models.Subscription
 import spray.json._
 
 object WebServer {
@@ -28,17 +29,30 @@ object WebServer {
           blogPage
         } ~
         path(posts) {
-          complete(Database.Posts.findAllModels().sortBy(-_.id).toJson)
+          complete(Database.Posts.all().map(_.sortBy(-_.created).toJson))
         } ~
-        path(postById / LongNumber) { id =>
-          complete(Database.Posts.findById(id).toJson)
+        path(postByTitle / Rest) { title =>
+          complete(Database.Posts.findByTitle(title).map(_.toJson))
+        } ~
+        path(subscribe / Rest) { email =>
+          complete(
+            Database.Subscriptions.insert(Subscription(email)).map(_.ok.toString)
+          )
         }
-    }
+    } ~
+      post {
+        path(postsByTags) {
+          entity(as[String]) { comaSeparatedTags =>
+            val tags = comaSeparatedTags.split(",").map(_.trim).toList
+            complete(
+              Database.Posts.findByTags(tags).map(_.toJson)
+            )
+          }
+        }
+      }
 
   def main(args: Array[String]): Unit = {
     val binding = Http().bindAndHandle(routes, args(0), args(1).toInt)
-
-    Database.initialize()
 
     binding.onFailure {
       case e: Exception =>

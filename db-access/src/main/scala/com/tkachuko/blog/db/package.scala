@@ -1,40 +1,60 @@
 package com.tkachuko.blog
 
-import com.tkachuko.blog.models.Post
+import com.tkachuko.blog.db.IO._
+import com.tkachuko.blog.models.{Post, Subscription}
 import com.typesafe.config.ConfigFactory
-import scalikejdbc.{AutoSession, WrappedResultSet, _}
-import skinny.DBSettings
-import skinny.orm.{Alias, SkinnyCRUDMapper}
+import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.api.commands.WriteResult
+import reactivemongo.api.{MongoConnection, MongoDriver}
+import reactivemongo.bson.{BSONArray, BSONDocument}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.Success
 
 package object db {
 
-  val config = ConfigFactory.load("application.conf")
-  val init = config.getBoolean("development.init")
+  val config = ConfigFactory.load("db.conf")
+  val name = config.getString("db.name")
 
   object Database {
 
-    implicit val session = AutoSession
+    val driver = new MongoDriver
+    val uri = config.getString("db.uri")
 
-    def initialize(): Unit = {
-      DBSettings.initialize()
-      if (init) {
-        sql"drop table if exists POSTS;".execute().apply()
-        sql"create table POSTS (id serial, title varchar(50), content varchar(100000));".execute().apply()
+    object Posts {
+
+      val collection: Future[BSONCollection] = connection.map(_ (Names.posts))
+
+      def all(): Future[List[Post]] =
+        collection.flatMap(_.find(BSONDocument()).cursor[Post]().collect[List]())
+
+      def count(): Future[Int] = collection.flatMap(_.count())
+
+      def insert(post: Post): Future[WriteResult] = collection.flatMap(_.insert(post))
+
+      def findByTitle(title: String): Future[Option[Post]] =
+        collection.flatMap(_.find(BSONDocument("title" -> title)).one[Post])
+
+      def findByTags(tags: List[String]): Future[List[Post]] = {
+        val conditions = BSONArray(tags.map(tag => BSONDocument("tags" -> tag)))
+        collection.flatMap(_.find(BSONDocument("$or" -> conditions)).cursor[Post]().collect[List]())
       }
     }
 
-    object Posts extends SkinnyCRUDMapper[Post] {
+    object Subscriptions {
 
-      override def defaultAlias: Alias[Post] = createAlias("p")
+      val collection: Future[BSONCollection] = connection.map(_ (Names.subscriptions))
 
-      override def extract(rs: WrappedResultSet, n: scalikejdbc.ResultName[Post]): Post =
-        Post(rs.long(n.id), rs.string(n.title), rs.string(n.content))
+      def count(): Future[Int] = collection.flatMap(_.count())
 
-      override def tableName: String = "POSTS"
+      def insert(subscription: Subscription): Future[WriteResult] = collection.flatMap(_.insert(subscription))
     }
 
-    def save(post: Post) =
-      sql"insert into POSTS (id, title, content) values(${post.id}, ${post.title}, ${post.content});".execute().apply()
+    lazy val connection = MongoConnection.parseURI(uri) match {
+      case Success(parsedUri) => driver.connection(parsedUri).database(name)
+      case _ => throw new IllegalArgumentException(s"Invalid mongo URI specifier: $uri")
+    }
   }
 
 }
