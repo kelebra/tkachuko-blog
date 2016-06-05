@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.{MongoConnection, MongoDriver}
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONArray, BSONDocument}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -35,6 +35,11 @@ package object db {
 
       def findByTitle(title: String): Future[Option[Post]] =
         collection.flatMap(_.find(BSONDocument("title" -> title)).one[Post])
+
+      def findByTags(tags: List[String]): Future[List[Post]] = {
+        val conditions = BSONArray(tags.map(tag => BSONDocument("tags" -> tag)))
+        collection.flatMap(_.find(BSONDocument("$or" -> conditions)).cursor[Post]().collect[List]())
+      }
     }
 
     object Subscriptions {

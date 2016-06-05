@@ -29,7 +29,7 @@ object WebServer {
           blogPage
         } ~
         path(posts) {
-          complete(Database.Posts.all().map(_.toJson))
+          complete(Database.Posts.all().map(_.sortBy(-_.created).toJson))
         } ~
         path(postByTitle / Rest) { title =>
           complete(Database.Posts.findByTitle(title).map(_.toJson))
@@ -39,7 +39,17 @@ object WebServer {
             Database.Subscriptions.insert(Subscription(email)).map(_.ok.toString)
           )
         }
-    }
+    } ~
+      post {
+        path(postsByTags) {
+          entity(as[String]) { comaSeparatedTags =>
+            val tags = comaSeparatedTags.split(",").map(_.trim).toList
+            complete(
+              Database.Posts.findByTags(tags).map(_.toJson)
+            )
+          }
+        }
+      }
 
   def main(args: Array[String]): Unit = {
     val binding = Http().bindAndHandle(routes, args(0), args(1).toInt)

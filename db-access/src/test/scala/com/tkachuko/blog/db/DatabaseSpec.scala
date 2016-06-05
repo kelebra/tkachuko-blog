@@ -12,7 +12,7 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
   "Database" should {
 
     "retrieve all posts" in {
-      Database.Posts.all().await.size shouldBe 3
+      Database.Posts.all().await.size shouldBe 5
     }
 
     "retrieve post with tags" in {
@@ -21,7 +21,11 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
       ).tags should not be empty
     }
 
-    "retrieve all subscriptions" in {
+    "find posts by tags" in {
+      Database.Posts.findByTags(List("scala", "akka")).await.size shouldBe 3
+    }
+
+    "retrieve all subscriptions count" in {
       Database.Subscriptions.count().await shouldBe 1
     }
 
@@ -32,6 +36,8 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
     Database.Posts.insert(Post("Title1", "Hello!")).await
     Database.Posts.insert(Post("Title2", "Hello!")).await
     Database.Posts.insert(Post("Title3", "Hello!", List("akka", "scala"))).await
+    Database.Posts.insert(Post("Title3", "Hello!", List("akka"))).await
+    Database.Posts.insert(Post("Title3", "Hello!", List("scala"))).await
     Database.Subscriptions.insert(Subscription("mymail")).await
   }
 

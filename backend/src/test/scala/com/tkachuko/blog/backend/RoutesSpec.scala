@@ -1,6 +1,6 @@
 package com.tkachuko.blog.backend
 
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{HttpEntity, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.tkachuko.blog.backend.WebServer.routes
 import com.tkachuko.blog.backend.static.StaticDataResolver._
@@ -46,11 +46,21 @@ class RoutesSpec extends WordSpec with Matchers with ScalatestRouteTest {
         responseAs[String] shouldBe "true"
       }
     }
+
+    "return posts that contain at least one specified tags via /tags" in {
+      Post(s"/$postsByTags", HttpEntity("akka, scala")) ~> routes ~> check {
+        status === StatusCodes.Success
+        responseAs[String] should not be empty
+      }
+    }
   }
 
   override protected def beforeAll(): Unit = {
     InMemoryMongo.start()
     Database.Posts.insert(BlogPost("hello", "hi"))
+    Database.Posts.insert(BlogPost("hello1", "hi", List("akka", "scala")))
+    Database.Posts.insert(BlogPost("hello2", "hi", List("scala")))
+    Database.Posts.insert(BlogPost("hello3", "hi", List("akka")))
   }
 
   override protected def afterAll(): Unit = {
