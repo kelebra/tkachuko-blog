@@ -39,7 +39,7 @@ object Configuration {
   lazy val rootSettings = commonSettings
 
   object Versions {
-    val scala = "2.11.7"
+    val scala = "2.11.8"
     val scalaBinary = "2.11"
     val sbt = "0.13.7"
   }
