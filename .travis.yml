@@ -8,5 +8,3 @@ scala:
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION clean test
-after_success:
-  - sbt coveralls
