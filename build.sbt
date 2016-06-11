@@ -36,9 +36,10 @@ lazy val frontend = (project in file("frontend"))
         "org.scala-js" %%% "scalajs-dom" % "0.8.0",
         "com.lihaoyi" %%% "scalatags" % "0.4.5",
         "com.lihaoyi" %%% "upickle" % "0.4.1",
-        "be.doeraene" %%% "scalajs-jquery" % "0.9.0",
         "com.lihaoyi" %%% "utest" % "0.3.1"
       ),
-      testFrameworks += new TestFramework("utest.runner.Framework")
+      testFrameworks += new TestFramework("utest.runner.Framework"),
+      scalaJSStage := FastOptStage,
+      skip in packageJSDependencies := true
     ): _*)
   .enablePlugins(ScalaJSPlugin)

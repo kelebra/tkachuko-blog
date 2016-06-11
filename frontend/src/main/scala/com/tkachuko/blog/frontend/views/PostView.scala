@@ -3,7 +3,7 @@ package com.tkachuko.blog.frontend.views
 import com.tkachuko.blog.frontend.Elements._
 import com.tkachuko.blog.frontend.util.Util._
 import com.tkachuko.blog.models.Post
-import org.scalajs.dom.{Element, _}
+import org.scalajs.dom.{Element, MouseEvent, document}
 
 import scalatags.JsDom.all._
 
