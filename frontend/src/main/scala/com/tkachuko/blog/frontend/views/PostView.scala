@@ -17,7 +17,12 @@ class PostView(val post: Post) {
         `class` := "post",
         header(
           `class` := "post-header",
-          h2(`class` := "post-title", post.title, onclick := onTitleClick(container)),
+          h2(
+            `class` := "post-title",
+            style := "cursor: pointer;",
+            post.title,
+            onclick := onTitleClick(container)
+          ),
           p(
             `class` := "post-meta",
             post.tags.map(tag => a(`class` := "post-category post-category-design", href := "#", tag))

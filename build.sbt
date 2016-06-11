@@ -39,9 +39,6 @@ lazy val frontend = (project in file("frontend"))
         "be.doeraene" %%% "scalajs-jquery" % "0.9.0",
         "com.lihaoyi" %%% "utest" % "0.3.1"
       ),
-//      jsDependencies ++= Seq(
-//        "org.webjars.bower" % "prism" % "1.5.0" / "prism.js"
-//      ),
       testFrameworks += new TestFramework("utest.runner.Framework")
     ): _*)
   .enablePlugins(ScalaJSPlugin)
