@@ -25,6 +25,9 @@ object WebServer {
         path(resourcePrefix / Rest) { resource =>
           resource.asWebResource
         } ~
+        path(frontend) {
+          frontendJs
+        } ~
         path(blog) {
           blogPage
         } ~
@@ -38,8 +41,7 @@ object WebServer {
           complete(
             Database.Subscriptions.insert(Subscription(email)).map(_.ok.toString)
           )
-        } ~
-        getFromResourceDirectory(".")
+        }
     } ~
       post {
         path(postsByTags) {
