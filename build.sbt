@@ -2,7 +2,7 @@ import Configuration._
 
 lazy val root = (project in file("."))
   .settings(rootSettings: _*)
-  .aggregate(modelsJvm, modelsJs, dbAccess, backend)
+  .aggregate(modelsJvm, dbAccess, backend)
 
 lazy val dbAccess = (project in file("db-access"))
   .settings(dbAccessSettings: _*).dependsOn(modelsJvm, util)
@@ -13,6 +13,7 @@ lazy val models = (crossProject.crossType(CrossType.Pure) in file("models"))
 lazy val modelsJvm = models.jvm
 
 lazy val modelsJs = models.js
+  .settings(assembly := new File(""))
 
 lazy val util = (project in file("util"))
   .settings(utilSettings: _*)
@@ -36,10 +37,9 @@ lazy val frontend = (project in file("frontend"))
         "org.scala-js" %%% "scalajs-dom" % "0.8.0",
         "com.lihaoyi" %%% "scalatags" % "0.4.5",
         "com.lihaoyi" %%% "upickle" % "0.4.1",
-        "com.lihaoyi" %%% "utest" % "0.3.1"
+        "com.lihaoyi" %%% "utest" % "0.3.1" % "test"
       ),
       testFrameworks += new TestFramework("utest.runner.Framework"),
-      scalaJSStage := FastOptStage,
-      skip in packageJSDependencies := true
+      scalaJSStage := FastOptStage
     ): _*)
   .enablePlugins(ScalaJSPlugin)
