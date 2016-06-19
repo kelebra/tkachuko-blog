@@ -1,5 +1,4 @@
 import Dependencies._
-import org.scoverage.coveralls.Imports.CoverallsKeys._
 import sbt.Keys._
 import sbt._
 
@@ -15,7 +14,6 @@ object Configuration {
       libraryDependencies ++= Seq(scalaTest),
       parallelExecution in Test := false,
       dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-      coverallsToken := Some("BnKklcH3fqZnPMVeBSpNg23t9S0VJPcZG"),
       resolvers ++= Seq(
         "RoundEights" at "http://maven.spikemark.net/roundeights",
         "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
@@ -39,7 +37,7 @@ object Configuration {
   lazy val rootSettings = commonSettings
 
   object Versions {
-    val scala = "2.11.7"
+    val scala = "2.11.8"
     val scalaBinary = "2.11"
     val sbt = "0.13.7"
   }

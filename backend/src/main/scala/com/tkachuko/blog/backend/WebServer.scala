@@ -25,14 +25,17 @@ object WebServer {
         path(resourcePrefix / Rest) { resource =>
           resource.asWebResource
         } ~
-        path(blog) {
+        path(frontend) {
+          frontendJs
+        } ~
+        path(blog ~ Slash.? ~ Rest.?) { _ =>
           blogPage
         } ~
         path(posts) {
           complete(Database.Posts.all().map(_.sortBy(-_.created).toJson))
         } ~
         path(postByTitle / Rest) { title =>
-          complete(Database.Posts.findByTitle(title).map(_.toJson))
+          complete(Database.Posts.findByTitle(title.withoutHttpSpaces).map(_.toJson))
         } ~
         path(subscribe / Rest) { email =>
           complete(
@@ -42,10 +45,9 @@ object WebServer {
     } ~
       post {
         path(postsByTags) {
-          entity(as[String]) { comaSeparatedTags =>
-            val tags = comaSeparatedTags.split(",").map(_.trim).toList
+          entity(as[String]) { tags =>
             complete(
-              Database.Posts.findByTags(tags).map(_.toJson)
+              Database.Posts.findByTags(tags.comaSeparatedList).map(_.toJson)
             )
           }
         }

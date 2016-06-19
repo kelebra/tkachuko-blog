@@ -16,6 +16,10 @@ object StaticDataResolver {
 
   val subscribe = "subscribe"
 
+  val frontend = "frontend-fastopt.js"
+
+  val frontendJs = frontend.asPlainResource
+
   val homePage = "index.html".asWebResource
 
   val blogPage = "blog.html".asWebResource
@@ -23,6 +27,8 @@ object StaticDataResolver {
   implicit class WebResource(val path: String) extends AnyVal {
 
     def asWebResource = getFromResource(s"$resourcePrefix/$path")
+
+    def asPlainResource = getFromResource(path)
   }
 
 }
