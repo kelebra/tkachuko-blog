@@ -1,10 +1,10 @@
 import Configuration._
 
-lazy val root = (project in file("."))
+lazy val `tkachuko-blog` = (project in file("."))
   .settings(rootSettings: _*)
-  .aggregate(modelsJvm, dbAccess, backend)
+  .aggregate(modelsJvm, `db-access`, backend)
 
-lazy val dbAccess = (project in file("db-access"))
+lazy val `db-access` = (project in file("db-access"))
   .settings(dbAccessSettings: _*).dependsOn(modelsJvm, util)
 
 lazy val models = (crossProject.crossType(CrossType.Pure) in file("models"))
@@ -20,7 +20,7 @@ lazy val util = (project in file("util"))
 
 lazy val backend = (project in file("backend"))
   .settings(backendSettings: _*)
-  .dependsOn(dbAccess, modelsJvm)
+  .dependsOn(`db-access`, modelsJvm)
   .settings(
     (resourceGenerators in Compile) <+=
       (fastOptJS in Compile in frontend, packageScalaJSLauncher in Compile in frontend)
