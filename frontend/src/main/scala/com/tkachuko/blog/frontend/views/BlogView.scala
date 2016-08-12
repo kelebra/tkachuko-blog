@@ -7,12 +7,13 @@ import org.scalajs.dom._
 
 import scalatags.JsDom.all._
 
-class BlogView(posts: List[PostView]) {
+class BlogView(posts: List[PostView], tags: Set[TagView]) {
 
   def render = {
     document.body.innerHTML = ""
     document.body.appendChild(staticContent())
     posts.foreach(_.renderIn(document.getElementById("posts")))
+    tags.foreach(_.renderIn(document.getElementById("tags")))
     highlightCode()
   }
 
@@ -37,6 +38,19 @@ class BlogView(posts: List[PostView]) {
               li(`class` := "nav-item", a(`class` := "pure-button", href := "/", "Home")),
               li(`class` := "nav-item", a(`class` := "pure-button", href := "/blog", "Blog"))
             )
+          ),
+
+          br,
+
+          h4(`class` := "brand-tagline", "Posts by tags:"),
+
+          nav(
+            `class` := "nav",
+
+            ul(
+              id := "tags",
+              `class` := "nav-list"
+            )
           )
         )
       ),
@@ -53,5 +67,7 @@ class BlogView(posts: List[PostView]) {
 
 object BlogView {
 
-  def apply(posts: List[Post]) = new BlogView(posts.map(PostView.apply))
+  import com.tkachuko.blog.frontend.util.Util._
+
+  def apply(posts: List[Post]) = new BlogView(posts.map(PostView.apply), posts.tags.map(TagView.apply))
 }

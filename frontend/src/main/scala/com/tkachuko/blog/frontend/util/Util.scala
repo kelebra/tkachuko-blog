@@ -14,5 +14,10 @@ object Util {
     def post: Post = read[Post](json)
   }
 
+  implicit class TagsExtractor(posts: List[Post]) {
+
+    def tags: Set[String] = posts.flatMap(_.tags).toSet
+  }
+
   def highlightCode() = js.eval("Prism.highlightAll();")
 }

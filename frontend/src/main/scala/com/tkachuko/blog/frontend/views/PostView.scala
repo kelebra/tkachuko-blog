@@ -1,8 +1,6 @@
 package com.tkachuko.blog.frontend.views
 
 import com.tkachuko.blog.frontend.Elements._
-import com.tkachuko.blog.frontend.router.Router
-import com.tkachuko.blog.frontend.router.Router._
 import com.tkachuko.blog.frontend.util.Util._
 import com.tkachuko.blog.models.Post
 import org.scalajs.dom.{Element, MouseEvent, document}
@@ -27,7 +25,7 @@ class PostView(val post: Post) {
           ),
           p(
             `class` := "post-meta",
-            post.tags.map(tag => a(`class` := "post-category post-category-design", tag, onclick := onTagClick(tag)))
+            post.tags.map(tag => a(`class` := "post-category post-category-design", tag, onclick := TagView.onTagClick(tag)))
           )
         ),
         div(`class` := "post-description", id := contentElementId)
@@ -42,8 +40,6 @@ class PostView(val post: Post) {
     renderIn(container)
     highlightCode()
   }
-
-  def onTagClick(tag: String): MouseEvent => Unit = event => Router(tag.toTagUrl)
 }
 
 object PostView {

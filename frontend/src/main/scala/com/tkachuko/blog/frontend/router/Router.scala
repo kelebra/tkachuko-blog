@@ -7,12 +7,9 @@ import org.scalajs.dom._
 object Router {
 
   def apply(url: String) = url match {
-    case post if url.containsPost =>
-      Posts.loadOne(post.postTitle, BlogView.apply(_).render)
-    case tag if url.containsTag =>
-      Posts.loadWithTag(tag.tag, BlogView.apply(_).render)
-    case _ =>
-      Posts.loadAll(BlogView.apply(_).render)
+    case post if url.containsPost => Posts.loadOne(post.postTitle)(BlogView.apply(_).render)
+    case tag if url.containsTag => Posts.loadWithTag(tag.tag)(BlogView.apply(_).render)
+    case _ => Posts.loadAll(BlogView.apply(_).render)
   }
 
   implicit class URLOps(value: String) {

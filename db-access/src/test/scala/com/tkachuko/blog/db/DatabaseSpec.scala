@@ -45,7 +45,7 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
   implicit class Awaitable[T](future: Future[T]) {
 
-    def await: T = Await.result(future, 5 seconds)
+    def await: T = Await.result(future, 10 seconds)
   }
 
 }
