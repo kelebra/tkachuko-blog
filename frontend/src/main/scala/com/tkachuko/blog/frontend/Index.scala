@@ -11,96 +11,122 @@ object Index extends js.JSApp {
   @JSExport
   def main(): Unit = {
     document.body.innerHTML = ""
-    List(header, quote, links).foreach(element => document.body.appendChild(element.render))
+    document.body.appendChild(page.render)
   }
+
+  def page = div(`class` := "pusher", header, body)
 
   def header =
     div(
-      `class` := "header",
+      `class` := "ui inverted vertical masthead center aligned segment",
       div(
-        `class` := "home-menu pure-menu pure-menu-horizontal pure-menu-fixed",
-        a(`class` := "pure-menu-heading", "Oleksii Tkachuk"),
+        `class` := "ui container",
+        div(
+          `class` := "ui large secondary inverted pointing menu",
+          a(`class` := "active item", "Home"),
+          a(`class` := "item", href := "/blog", "Blog")
+//          TODO: create CV page
+//          a(`class` := "item", "CV")
+        )
+      ),
+      div(
+        `class` := "ui text container",
+        h1(`class` := "ui inverted header", "Simplicity is prerequisite for reliability"),
+        h2("Edsger W. Dijkstra"),
+        div(`class` := "ui huge primary button", "Welcome to my blog", i(`class` := "right arrow icon"))
+      )
+    )
 
-        ul(
-          `class` := "pure-menu-list",
-          li(`class` := "pure-menu-item pure-menu-selected", a(href := "/", "Home")),
-          li(`class` := "pure-menu-item", a(href := "/blog", `class` := "pure-menu-link", "Blog"))
+  def body =
+    div(
+      `class` := "ui vertical stripe segment",
+      div(
+        `class` := "ui middle aligned centered stackable grid container",
+        div(
+          `class` := "ui link cards",
+          experience,
+          info,
+          github
         )
       )
     )
 
-  def quote =
+  def experience =
     div(
-      `class` := "splash-container",
-      div(
-        `class` := "splash",
-        h1(`class` := "splash-head", "Simplicity is prerequisite for reliability"),
-        p(`class` := "splash-subhead", "Edsger W. Dijkstra"),
-        p(a(href := "/blog", `class` := "pure-button pure-button-primary", "Oleksii's programming blog"))
-      )
-    )
-
-  def links =
-    div(
-      `class` := "content-wrapper",
+      `class` := "card",
       div(
         `class` := "content",
-        h2(`class` := "content-head is-center", "Abount me:"),
-
+        div(`class` := "header", "Comfortable with:"),
         div(
-          `class` := "pure-g", style := "text-align: center",
-
+          `class` := "description",
           div(
-            `class` := "l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4",
-            h2(
-              `class` := "content-subhead",
-              i(`class` := "fa fa-linkedin"),
-              a(href := "https://www.linkedin.com/in/oleksii-tkachuk-98b47375?trk=hp-identity-name", "Java/Scala Developer")
-            )
-          ),
-          div(
-            `class` := "l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4",
-            h2(
-              `class` := "content-subhead",
-              i(`class` := "fa fa-tasks"),
-              a(href := "https://www.hackerrank.com/kelebra20", "Hacker")
-            )
-          ),
-          div(
-            `class` := "l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4",
-            h2(
-              `class` := "content-subhead",
-              i(`class` := "fa fa-github"),
-              a(href := "https://github.com/kelebra", "Contributor")
-            )
-          ),
-          div(
-            `class` := "l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4",
-            h2(
-              `class` := "content-subhead",
-              i(`class` := "fa fa-stack-overflow"),
-              a(href := "http://stackoverflow.com/users/1299270/tkachuko", "Q&A Fan")
+            `class` := "ui centered animated list",
+            div(
+              `class` := "item",
+              i(`class` := "right aligned battery full icon"),
+              div(`class` := "content", "Java (4+ years experience)")
+            ),
+            div(
+              `class` := "item",
+              i(`class` := "right aligned battery high icon"),
+              div(`class` := "content", "Scala (2+ years experience)")
+            ),
+            div(
+              `class` := "item",
+              i(`class` := "right aligned battery medium icon"),
+              div(`class` := "content", "Python (2+ years experience)")
+            ),
+            div(
+              `class` := "item",
+              i(`class` := "right aligned battery low icon"),
+              div(`class` := "content", "JavaScipt (1+ years experience)")
             )
           )
         )
       ),
-      shortInfo,
-      footer
+      div(`class` := "extra content", i(`class` := "check icon"), "Learn hard, have fun")
     )
 
-  def shortInfo =
+  def info =
     div(
-      `class` := "ribbon l-box-lrg pure-g",
+      `class` := "card",
       div(
-        `class` := "l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-2-5",
-        img(`class` := "pure-img-responsive", alt := "File Icons", width := "300", src := "/pages/img/profile.png")
+        `class` := "image",
+        img(src := "http://cs631616.vk.me/v631616937/317ce/9lMzOM5RK18.jpg")
       ),
       div(
-        `class` := "pure-u-1 pure-u-md-1-2 pure-u-lg-3-5",
-        h2(`class` := "content-head content-head-ribbon", "Quick info:"),
-        p("Comfortable with ", i("Java"), ",", i("Scala"), " and their framework ecosystem. Programming enthusiast and blogger.")
+        `class` := "content",
+        div(`class` := "header", "Oleksii Tkachuk"),
+        div(`class` := "meta", a("Software Developer")),
+        div(`class` := "description", "Oleksii Tkachuk")
+      ),
+      div(
+        `class` := "extra content",
+        span(`class` := "right floated", i(`class` := "marker icon"), "Nashville, TN")
       )
     )
 
-  def footer = div(`class` := "footer l-box is-center", "2016 Oleksii Tkachuk")
+  def github = {
+    def repo(url: String) =
+      div(`class` := "item",
+        i(`class` := "large github right aligned icon"),
+        div(`class` := "content", a(`class` := "header", href := url, url.substring(url.lastIndexOf("/") + 1)))
+      )
+    div(
+      `class` := "ui card",
+      div(
+        `class` := "content",
+        div(`class` := "header", "Github projects:"),
+        div(`class` := "description",
+          div(`class` := "ui centered divided animated list",
+            repo("https://github.com/kelebra/chess-challenge"),
+            repo("https://github.com/kelebra/programming-interview-java"),
+            repo("https://github.com/kelebra/security-identifier"),
+            repo("https://github.com/kelebra/tkachuko-blog")
+          )
+        )
+      ),
+      div(`class` := "extra content", i(`class` := "check icon"), "Code hard, have fun")
+    )
+  }
 }
