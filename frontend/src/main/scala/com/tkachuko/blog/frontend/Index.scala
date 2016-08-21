@@ -25,15 +25,20 @@ object Index extends js.JSApp {
           `class` := "ui large secondary inverted pointing menu",
           a(`class` := "active item", "Home"),
           a(`class` := "item", href := "/blog", "Blog")
-//          TODO: create CV page
-//          a(`class` := "item", "CV")
+          //          TODO: create CV page
+          //          a(`class` := "item", "CV")
         )
       ),
       div(
         `class` := "ui text container",
         h1(`class` := "ui inverted header", "Simplicity is prerequisite for reliability"),
         h2("Edsger W. Dijkstra"),
-        div(`class` := "ui huge primary button", "Welcome to my blog", i(`class` := "right arrow icon"))
+        a(
+          `class` := "ui huge primary button",
+          href := "/blog",
+          "Welcome to my blog",
+          i(`class` := "right arrow icon")
+        )
       )
     )
 
@@ -102,6 +107,7 @@ object Index extends js.JSApp {
       ),
       div(
         `class` := "extra content",
+        span(`class` := "left floated", i(`class` := "mail icon"), "kelebra20@gmail.com"),
         span(`class` := "right floated", i(`class` := "marker icon"), "Nashville, TN")
       )
     )

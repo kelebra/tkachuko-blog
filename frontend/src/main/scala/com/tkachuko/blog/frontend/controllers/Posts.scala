@@ -20,4 +20,7 @@ object Posts extends AsyncLoader {
 
   def loadWithTag(tag: String)(callback: Callback): Unit =
     Ajax.post(url = "/tags", data = tag).onSuccess { case xhr => callback(xhr.responseText.posts) }
+
+  def count(callback: StringCallback): Unit =
+    Ajax.get(url = "/posts/count").onSuccess { case xhr => callback(xhr.responseText) }
 }
