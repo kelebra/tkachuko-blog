@@ -1,41 +1,44 @@
 package com.tkachuko.blog.frontend.views
 
-import com.tkachuko.blog.frontend.Elements._
+import java.util.concurrent.TimeUnit
+
 import com.tkachuko.blog.frontend.util.Util._
 import com.tkachuko.blog.models.Post
 import org.scalajs.dom.{Element, MouseEvent, document}
 
 import scalatags.JsDom.all._
 
-class PostView(val post: Post) {
+class PostView(post: Post, tags: List[TagView]) {
+
+  private def daysPublishedAgo =
+    math.abs((System.currentTimeMillis() - post.created.toLong) / TimeUnit.DAYS.toMillis(1)).toInt
 
   def renderIn(container: Element) = {
-    val contentElementId = post.title
+    val title = post.title
+    val tagsElementId = s"tags - $title"
 
     container.appendChild(
-      section(
-        `class` := "post",
-        header(
-          `class` := "post-header",
-          h2(
-            `class` := "post-title",
-            style := "cursor: pointer;",
-            post.title,
-            onclick := onTitleClick(container)
+      div(
+        `class` := "item",
+        div(
+          `class` := "content",
+          h1(`class` := "ui block header", onclick := onTitleClick(container), title),
+          div(
+            id := tagsElementId,
+            `class` := "meta",
+            a(s"Published $daysPublishedAgo day(s) ago")
           ),
-          p(
-            `class` := "post-meta",
-            post.tags.map(tag => a(`class` := "post-category post-category-design", tag, onclick := TagView.onTagClick(tag)))
-          )
-        ),
-        div(`class` := "post-description", id := contentElementId)
+          div(id := title, `class` := "description")
+        )
       ).render
     )
 
-    document.getElementById(contentElementId).innerHTML = post.content
+    tags.foreach(_.renderInColor(document.getElementById(tagsElementId)))
+
+    document.getElementById(title).innerHTML = post.content
   }
 
-  def onTitleClick(container: Element): MouseEvent => Unit = event => {
+  private def onTitleClick(container: Element): MouseEvent => Unit = event => {
     container.innerHTML = ""
     renderIn(container)
     highlightCode()
@@ -44,5 +47,5 @@ class PostView(val post: Post) {
 
 object PostView {
 
-  def apply(post: Post) = new PostView(post)
+  def apply(post: Post, tags: List[TagView]) = new PostView(post, tags)
 }

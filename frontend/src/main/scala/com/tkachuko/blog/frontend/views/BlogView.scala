@@ -1,9 +1,8 @@
 package com.tkachuko.blog.frontend.views
 
-import com.tkachuko.blog.frontend.Elements._
 import com.tkachuko.blog.frontend.util.Util._
 import com.tkachuko.blog.models.Post
-import org.scalajs.dom._
+import org.scalajs.dom.document
 
 import scalatags.JsDom.all._
 
@@ -11,63 +10,52 @@ class BlogView(posts: List[PostView], tags: Set[TagView]) {
 
   def render = {
     document.body.innerHTML = ""
-    document.body.appendChild(staticContent())
+
+    document.body.appendChild(sideBar)
+    document.body.appendChild(staticContent)
+
     posts.foreach(_.renderIn(document.getElementById("posts")))
-    tags.foreach(_.renderIn(document.getElementById("tags")))
+    tags.foreach(_.renderInText(document.getElementById("sidebar")))
+
     highlightCode()
   }
 
-  private def staticContent() =
+  private def sideBar =
     div(
-      `class` := "pure-g",
+      id := "sidebar",
+      `class` := "ui sidebar inverted vertical labeled icon menu",
+      a(`class` := "item", href := "/", i(`class` := "home icon"), "Home"),
+      a(`class` := "item", href := "/blog", i(`class` := "align justify icon"), "Blog"),
+      a(`class` := "item", i(`class` := "hashtag icon"), "Posts by tag:")
+    ).render
+
+  private def staticContent =
+    div(
+      `class` := "pusher",
       div(
-        `class` := "sidebar pure-u-1 pure-u-md-1-4",
-        div(
-          `class` := "header",
-
-          h1(`class` := "brand-title", "Oleksii's blog"),
-
-          h2(`class` := "brand-tagline", "Technical blog dedicated to java and scala"),
-
-          nav(
-            `class` := "nav",
-
-            ul(
-              `class` := "nav-list",
-
-              li(`class` := "nav-item", a(`class` := "pure-button", href := "/", "Home")),
-              li(`class` := "nav-item", a(`class` := "pure-button", href := "/blog", "Blog"))
-            )
-          ),
-
-          br,
-
-          h4(`class` := "brand-tagline", "Posts by tags:"),
-
-          nav(
-            `class` := "nav",
-
-            ul(
-              id := "tags",
-              `class` := "nav-list"
-            )
-          )
-        )
+        `class` := "ui top fixed inverted menu",
+        a(`class` := "item", i(`class` := "list layout icon"), "Menu", onclick := onSideBarToggle())
       ),
+      br,
+      br,
+      br,
       div(
-        `class` := "content pure-u-1 pure-u-md-3-4",
+        `class` := "ui container",
         div(
           id := "posts",
-          `class` := "posts",
-          h1(id := "heading", `class` := "content-subhead", "All posts")
+          `class` := "ui relaxed divided items"
         )
       )
     ).render
+
 }
 
 object BlogView {
 
   import com.tkachuko.blog.frontend.util.Util._
 
-  def apply(posts: List[Post]) = new BlogView(posts.map(PostView.apply), posts.tags.map(TagView.apply))
+  def apply(posts: List[Post]) = new BlogView(
+    posts.map(post => PostView(post, post.tags.map(TagView.apply))),
+    posts.tags.map(TagView.apply)
+  )
 }
