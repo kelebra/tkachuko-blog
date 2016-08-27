@@ -36,6 +36,8 @@ class PostView(post: Post, tags: List[TagView]) {
     tags.foreach(_.renderInColor(document.getElementById(tagsElementId)))
 
     document.getElementById(title).innerHTML = post.content
+
+    container.appendChild(br.render)
   }
 
   private def onTitleClick(container: Element): MouseEvent => Unit = event => {
