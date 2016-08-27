@@ -37,6 +37,9 @@ object WebServer {
         path(postByTitle / Rest) { title =>
           complete(Database.Posts.findByTitle(title.withoutHttpSpaces).map(_.toJson))
         } ~
+        path(posts / count) {
+          complete(Database.Posts.count().map(_.toJson))
+        } ~
         path(subscribe / Rest) { email =>
           complete(
             Database.Subscriptions.insert(Subscription(email)).map(_.ok.toString)

@@ -6,16 +6,25 @@ import org.scalajs.dom.{Element, MouseEvent}
 
 import scalatags.JsDom.all._
 
-class TagView(val tag: String) {
+class TagView(tag: String) {
 
-  def renderIn(container: Element): Unit = {
-    container.appendChild(
-      li(
-        `class` := "nav-item",
-        a(`class` := "pure-button", onclick := TagView.onTagClick(tag), tag)
-      ).render
-    )
+  lazy val color = tag.toLowerCase match {
+    case "scala" => "red"
+    case "java" => "teal"
+    case "akka" => "orange"
+    case "algorithms" => "blue"
+    case _ => ""
   }
+
+  def renderInColor(container: Element): Unit =
+    container.appendChild(
+      a(`class` := s"ui $color tag label item", onclick := TagView.onTagClick(tag), tag).render
+    )
+
+  def renderInText(container: Element): Unit =
+    container.appendChild(
+      a(`class` := "item", div(`class` := s"ui $color button", tag), onclick := TagView.onTagClick(tag)).render
+  )
 }
 
 object TagView {

@@ -1,6 +1,7 @@
 package com.tkachuko.blog.frontend.util
 
 import com.tkachuko.blog.models.Post
+import org.scalajs.dom.MouseEvent
 import upickle.default._
 
 import scala.scalajs.js
@@ -20,4 +21,9 @@ object Util {
   }
 
   def highlightCode() = js.eval("Prism.highlightAll();")
+
+  def onSideBarToggle(): MouseEvent => Unit = event => {
+    js.eval("$('#sidebar').sidebar('toggle');")
+    js.eval("$('.ui.dropdown').dropdown();")
+  }
 }

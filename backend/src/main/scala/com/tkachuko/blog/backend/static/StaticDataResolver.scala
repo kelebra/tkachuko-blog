@@ -12,6 +12,8 @@ object StaticDataResolver {
 
   val postByTitle = "post"
 
+  val count = "count"
+
   val postsByTags = "tags"
 
   val subscribe = "subscribe"
