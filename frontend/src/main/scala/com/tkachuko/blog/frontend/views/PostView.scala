@@ -2,13 +2,14 @@ package com.tkachuko.blog.frontend.views
 
 import java.util.concurrent.TimeUnit
 
+import com.tkachuko.blog.frontend.markdown.MarkdownString
 import com.tkachuko.blog.frontend.util.Util._
 import com.tkachuko.blog.models.Post
-import org.scalajs.dom.{Element, MouseEvent, document}
+import org.scalajs.dom.{Element, MouseEvent}
 
 import scalatags.JsDom.all._
 
-class PostView(post: Post, tags: List[TagView]) {
+class PostView(post: Post) {
 
   private def daysPublishedAgo =
     math.abs((System.currentTimeMillis() - post.created.toLong) / TimeUnit.DAYS.toMillis(1)).toInt
@@ -33,15 +34,13 @@ class PostView(post: Post, tags: List[TagView]) {
       ).render
     )
 
-    tags.foreach(_.renderInColor(document.getElementById(tagsElementId)))
+    post.tags.map(TagView.apply).foreach(_.renderInColor(tagsElementId.byId))
 
-    document.getElementById(title).innerHTML = post.content
-
-    container.appendChild(br.render)
+    replaceElementContent(title.byId, post.content.md, br.render)
   }
 
   private def onTitleClick(container: Element): MouseEvent => Unit = event => {
-    container.innerHTML = ""
+    replaceElementContent(container)
     renderIn(container)
     highlightCode()
   }
@@ -49,5 +48,5 @@ class PostView(post: Post, tags: List[TagView]) {
 
 object PostView {
 
-  def apply(post: Post, tags: List[TagView]) = new PostView(post, tags)
+  def apply(post: Post) = new PostView(post)
 }

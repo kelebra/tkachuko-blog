@@ -2,20 +2,16 @@ package com.tkachuko.blog.frontend.views
 
 import com.tkachuko.blog.frontend.util.Util._
 import com.tkachuko.blog.models.Post
-import org.scalajs.dom.document
 
 import scalatags.JsDom.all._
 
-class BlogView(posts: List[PostView], tags: Set[TagView]) {
+class BlogView(posts: List[Post]) {
 
   def render = {
-    document.body.innerHTML = ""
+    replaceBodyWith(sideBar, staticContent)
 
-    document.body.appendChild(sideBar)
-    document.body.appendChild(staticContent)
-
-    posts.foreach(_.renderIn(document.getElementById("posts")))
-    tags.foreach(_.renderInText(document.getElementById("sidebar")))
+    posts.map(post => PostView(post)).foreach(_.renderIn("posts".byId))
+    posts.tags.map(TagView.apply).foreach(_.renderInText("sidebar".byId))
 
     highlightCode()
   }
@@ -52,10 +48,5 @@ class BlogView(posts: List[PostView], tags: Set[TagView]) {
 
 object BlogView {
 
-  import com.tkachuko.blog.frontend.util.Util._
-
-  def apply(posts: List[Post]) = new BlogView(
-    posts.map(post => PostView(post, post.tags.map(TagView.apply))),
-    posts.tags.map(TagView.apply)
-  )
+  def apply(posts: List[Post]) = new BlogView(posts)
 }

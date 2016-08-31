@@ -1,6 +1,6 @@
 package com.tkachuko.blog.frontend
 
-import org.scalajs.dom._
+import com.tkachuko.blog.frontend.util.Util
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
@@ -9,10 +9,7 @@ import scalatags.JsDom.all._
 object Index extends js.JSApp {
 
   @JSExport
-  def main(): Unit = {
-    document.body.innerHTML = ""
-    document.body.appendChild(page.render)
-  }
+  def main(): Unit = Util.replaceBodyWith(page.render)
 
   def page = div(`class` := "pusher", header, body)
 
@@ -102,8 +99,7 @@ object Index extends js.JSApp {
       div(
         `class` := "content",
         div(`class` := "header", "Oleksii Tkachuk"),
-        div(`class` := "meta", a("Software Developer")),
-        div(`class` := "description", "Oleksii Tkachuk")
+        div(`class` := "meta", a("Software Developer"))
       ),
       div(
         `class` := "extra content",
