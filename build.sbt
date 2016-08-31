@@ -2,7 +2,7 @@ import Configuration._
 
 lazy val `tkachuko-blog` = (project in file("."))
   .settings(rootSettings: _*)
-  .aggregate(modelsJvm, `db-access`, backend)
+  .aggregate(modelsJvm, `db-access`, backend, frontend)
 
 lazy val `db-access` = (project in file("db-access"))
   .settings(dbAccessSettings: _*).dependsOn(modelsJvm, util)
@@ -37,9 +37,10 @@ lazy val frontend = (project in file("frontend"))
         "org.scala-js" %%% "scalajs-dom" % "0.8.0",
         "com.lihaoyi" %%% "scalatags" % "0.4.5",
         "com.lihaoyi" %%% "upickle" % "0.4.1",
-        "com.lihaoyi" %%% "utest" % "0.3.1" % "test"
+        "com.lihaoyi" %%% "utest" % "0.4.0" % "test"
       ),
       testFrameworks += new TestFramework("utest.runner.Framework"),
       scalaJSStage := FastOptStage
     ): _*)
+  .disablePlugins(sbtassembly.AssemblyPlugin)
   .enablePlugins(ScalaJSPlugin)

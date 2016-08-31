@@ -1,25 +1,25 @@
 package com.tkachuko.blog.frontend.router
 
 import com.tkachuko.blog.frontend.router.Router.URLOps
-import org.scalatest.{Matchers, WordSpec}
+import utest._
 
-class URLOpsSpec extends WordSpec with Matchers {
+object URLOpsSpec extends TestSuite {
 
-  "URL as string" should {
+  val tests = TestSuite {
 
-    "contain post reference" in {
+    "contain post reference" - {
       val url = "http://domain:port/resource#post=hello%20world"
-      url.containsPost shouldBe true
+      url.containsPost ==> true
     }
 
-    "not contain post reference" in {
+    "not contain post reference" - {
       val url = "http://domain:port/blog"
-      url.containsPost shouldBe false
+      url.containsPost ==> false
     }
 
-    "can be used to extract post title" in {
+    "be used to extract post title" - {
       val url = "http://domain:port/resource#post=hello%20world"
-      url.postTitle shouldBe "hello%20world"
+      url.postTitle ==> "hello%20world"
     }
   }
 }
