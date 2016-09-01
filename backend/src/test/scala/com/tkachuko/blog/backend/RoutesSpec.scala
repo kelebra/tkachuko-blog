@@ -2,7 +2,7 @@ package com.tkachuko.blog.backend
 
 import akka.http.scaladsl.model.{HttpEntity, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.tkachuko.blog.backend.WebServer.routes
+import com.tkachuko.blog.backend.WebServer.RestService.routes
 import com.tkachuko.blog.backend.static.StaticDataResolver._
 import com.tkachuko.blog.db.{Database, InMemoryMongo}
 import com.tkachuko.blog.models.{Post => BlogPost}
