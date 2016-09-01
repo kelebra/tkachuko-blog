@@ -1,7 +1,5 @@
 package com.tkachuko.blog.frontend.views
 
-import java.util.concurrent.TimeUnit
-
 import com.tkachuko.blog.frontend.markdown.MarkdownString
 import com.tkachuko.blog.frontend.util.Util._
 import com.tkachuko.blog.models.Post
@@ -10,9 +8,6 @@ import org.scalajs.dom.{Element, MouseEvent}
 import scalatags.JsDom.all._
 
 class PostView(post: Post) {
-
-  private def daysPublishedAgo =
-    math.abs((System.currentTimeMillis() - post.created.toLong) / TimeUnit.DAYS.toMillis(1)).toInt
 
   def renderIn(container: Element) = {
     val title = post.title
@@ -27,7 +22,7 @@ class PostView(post: Post) {
           div(
             id := tagsElementId,
             `class` := "meta",
-            a(s"Published $daysPublishedAgo day(s) ago")
+            a(s"Published ${post.created.readableDifference} ago")
           ),
           div(id := title, `class` := "description")
         )
