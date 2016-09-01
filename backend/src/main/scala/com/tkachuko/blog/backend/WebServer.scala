@@ -32,7 +32,7 @@ object WebServer {
           blogPage
         } ~
         path(posts) {
-          complete(Database.Posts.all().map(_.sortBy(-_.created).toJson))
+          complete(Database.Posts.all().map(_.toJson))
         } ~
         path(postByTitle / Rest) { title =>
           complete(Database.Posts.findByTitle(title.withoutHttpSpaces).map(_.toJson))
