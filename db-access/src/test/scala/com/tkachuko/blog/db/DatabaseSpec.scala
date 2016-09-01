@@ -15,6 +15,10 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
       Database.Posts.all().await.size shouldBe 5
     }
 
+    "retrieve all posts in chronological order" in {
+      Database.Posts.all().await.map(_.title) shouldBe List("Title5", "Title4", "Title3", "Title2", "Title1")
+    }
+
     "retrieve post with tags" in {
       Database.Posts.findByTitle("Title3").await.getOrElse(
         throw new RuntimeException("Inserted post was not found")
@@ -23,6 +27,10 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
 
     "find posts by tags" in {
       Database.Posts.findByTags(List("scala", "akka")).await.size shouldBe 3
+    }
+
+    "find all posts by tags in chronological order" in {
+      Database.Posts.findByTags(List("scala", "akka")).await.map(_.title) shouldBe List("Title5", "Title4", "Title3")
     }
 
     "retrieve all subscriptions count" in {
@@ -36,8 +44,8 @@ class DatabaseSpec extends WordSpec with Matchers with BeforeAndAfterAll {
     Database.Posts.insert(Post("Title1", "Hello!")).await
     Database.Posts.insert(Post("Title2", "Hello!")).await
     Database.Posts.insert(Post("Title3", "Hello!", List("akka", "scala"))).await
-    Database.Posts.insert(Post("Title3", "Hello!", List("akka"))).await
-    Database.Posts.insert(Post("Title3", "Hello!", List("scala"))).await
+    Database.Posts.insert(Post("Title4", "Hello!", List("akka"))).await
+    Database.Posts.insert(Post("Title5", "Hello!", List("scala"))).await
     Database.Subscriptions.insert(Subscription("mymail")).await
   }
 
