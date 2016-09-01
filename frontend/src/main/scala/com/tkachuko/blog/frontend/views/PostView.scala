@@ -18,11 +18,11 @@ class PostView(post: Post) {
         `class` := "item",
         div(
           `class` := "content",
-          h1(`class` := "ui block header", onclick := onTitleClick(container), title),
+          a(`class` := "ui block header", onclick := onTitleClick(container), h1(title)),
           div(
             id := tagsElementId,
             `class` := "meta",
-            a(s"Published ${post.created.readableDifference} ago")
+            span(s"Published ${post.created.readableDifference} ago")
           ),
           div(id := title, `class` := "description")
         )

@@ -17,16 +17,6 @@ object Index extends js.JSApp {
     div(
       `class` := "ui inverted vertical masthead center aligned segment",
       div(
-        `class` := "ui container",
-        div(
-          `class` := "ui large secondary inverted pointing menu",
-          a(`class` := "active item", "Home"),
-          a(`class` := "item", href := "/blog", "Blog")
-          //          TODO: create CV page
-          //          a(`class` := "item", "CV")
-        )
-      ),
-      div(
         `class` := "ui text container",
         h1(`class` := "ui inverted header", "Simplicity is prerequisite for reliability"),
         h2("Edsger W. Dijkstra"),
@@ -45,7 +35,7 @@ object Index extends js.JSApp {
       div(
         `class` := "ui middle aligned centered stackable grid container",
         div(
-          `class` := "ui link cards",
+          `class` := "ui three stackable cards",
           experience,
           info,
           github
@@ -62,7 +52,7 @@ object Index extends js.JSApp {
         div(
           `class` := "description",
           div(
-            `class` := "ui centered animated list",
+            `class` := "ui centered list",
             div(
               `class` := "item",
               i(`class` := "right aligned battery full icon"),
@@ -94,7 +84,7 @@ object Index extends js.JSApp {
       `class` := "card",
       div(
         `class` := "image",
-        img(src := "http://cs631616.vk.me/v631616937/317ce/9lMzOM5RK18.jpg")
+        img(src := "/pages/img/profile.jpg")
       ),
       div(
         `class` := "content",
@@ -103,7 +93,7 @@ object Index extends js.JSApp {
       ),
       div(
         `class` := "extra content",
-        span(`class` := "left floated", i(`class` := "mail icon"), "kelebra20@gmail.com"),
+        a(href := "mailto:kelebra20@gmail.com", `class` := "left floated", i(`class` := "mail icon"), "kelebra20@gmail.com"),
         span(`class` := "right floated", i(`class` := "marker icon"), "Nashville, TN")
       )
     )
