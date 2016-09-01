@@ -23,11 +23,11 @@ class PostView(post: Post) {
         `class` := "item",
         div(
           `class` := "content",
-          h1(`class` := "ui block header", onclick := onTitleClick(container), title),
+          a(`class` := "ui block header", onclick := onTitleClick(container), h1(title)),
           div(
             id := tagsElementId,
             `class` := "meta",
-            a(s"Published $daysPublishedAgo day(s) ago")
+            span(s"Published $daysPublishedAgo day(s) ago")
           ),
           div(id := title, `class` := "description")
         )
