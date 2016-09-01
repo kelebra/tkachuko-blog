@@ -35,7 +35,7 @@ object Index extends js.JSApp {
       div(
         `class` := "ui middle aligned centered stackable grid container",
         div(
-          `class` := "ui cards",
+          `class` := "ui three stackable cards",
           experience,
           info,
           github
@@ -93,7 +93,7 @@ object Index extends js.JSApp {
       ),
       div(
         `class` := "extra content",
-        a(href:= "mailto:kelebra20@gmail.com", `class` := "left floated", i(`class` := "mail icon"), "kelebra20@gmail.com"),
+        a(href := "mailto:kelebra20@gmail.com", `class` := "left floated", i(`class` := "mail icon"), "kelebra20@gmail.com"),
         span(`class` := "right floated", i(`class` := "marker icon"), "Nashville, TN")
       )
     )
