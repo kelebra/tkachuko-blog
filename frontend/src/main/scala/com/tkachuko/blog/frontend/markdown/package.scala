@@ -12,10 +12,10 @@ package object markdown {
 
       def isIn(value: String, offset: Int): Option[Replacement] =
         value.optionalIndexOf(raw, offset)
-          .map(at => Replacement(at, raw, rendered))
+          .map(at => Replacement(at, raw.length))
           .orElse(
             value.optionalIndexOf(rendered, offset)
-              .map(at => Replacement(at, rendered, rendered))
+              .map(at => Replacement(at, rendered.length))
           )
 
       lazy val chunk = math.max(raw.length, rendered.length)
@@ -57,14 +57,11 @@ package object markdown {
 
     val headings: Blocks = 6.to(1, -1).map(H.apply).toList
 
-    val supported: Blocks = Bold :: Italic :: languages ::: headings ::: Nil
+    val supported: Blocks =  languages ::: headings ::: Bold :: Italic :: Nil
 
-    val nestedBlocks: Map[Boolean, Blocks] = supported.groupBy(_.nested)
+    case class Replacement(index: Int, length: Int) {
 
-    case class Replacement(at: Int, previous: String, replacement: String) {
-      def start = at
-
-      def end = at + previous.length
+      def end = index + length
     }
 
   }
@@ -83,14 +80,16 @@ package object markdown {
 
     import Abstractions._
 
-    type Partition = Either[Replacement, String]
+    type Partition = Either[Rendered, String]
+
+    case class Rendered(block: Block, value: String)
 
     case class Partitioned(parts: List[Partition] = List.empty) {
 
       def render: String = parts.foldLeft("") { case (acc, part: Partition) =>
         acc + (
           part match {
-            case Left(value) => value.replacement
+            case Left(rendered) => rendered.block.open.rendered + rendered.value + rendered.block.close.rendered
             case Right(value) => value
           })
       }
@@ -104,17 +103,15 @@ package object markdown {
         lazy val `default` = partitions.copy(parts = partitions.parts :+ Right(input.substring(offset)))
 
         by.startsIn(input, offset) match {
-          case Some(startReplacement) =>
-            by.endsIn(input, startReplacement.start + 1) match {
-              case Some(endReplacement) =>
+          case Some(start) =>
+            by.endsIn(input, start.index + 1) match {
+              case Some(end) =>
                 partition(
-                  input, by, endReplacement.end,
+                  input, by, end.end,
                   partitions.copy(
                     parts = partitions.parts :+
-                      Right(input.substring(offset, startReplacement.start)) :+
-                      Left(startReplacement) :+
-                      Right(input.substring(startReplacement.end, endReplacement.start)) :+
-                      Left(endReplacement)
+                      Right(input.substring(offset, start.index)) :+
+                      Left(Rendered(by, input.substring(start.end, end.index)))
                   )
                 )
               case _ => `default`
