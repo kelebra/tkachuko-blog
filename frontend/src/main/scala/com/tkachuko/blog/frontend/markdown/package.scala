@@ -93,14 +93,16 @@ package object markdown {
             case Right(value) => value
           })
       }
+
+      def +(partition: Partition): Partitioned = copy(parts = parts :+ partition)
     }
 
     @tailrec
     def partition(input: String, by: Block, offset: Int = 0,
-                  partitions: Partitioned = Partitioned()): Partitioned = {
-      if (offset >= input.length) partitions
+                  acc: Partitioned = Partitioned()): Partitioned = {
+      if (offset >= input.length) acc
       else {
-        lazy val `default` = partitions.copy(parts = partitions.parts :+ Right(input.substring(offset)))
+        lazy val `default` = acc.copy(parts = acc.parts :+ Right(input.substring(offset)))
 
         by.startsIn(input, offset) match {
           case Some(start) =>
@@ -108,11 +110,9 @@ package object markdown {
               case Some(end) =>
                 partition(
                   input, by, end.end,
-                  partitions.copy(
-                    parts = partitions.parts :+
-                      Right(input.substring(offset, start.index)) :+
-                      Left(Rendered(by, input.substring(start.end, end.index)))
-                  )
+                  acc +
+                    Right(input.substring(offset, start.index)) +
+                    Left(Rendered(by, input.substring(start.end, end.index)))
                 )
               case _ => `default`
             }
