@@ -17,8 +17,6 @@ package object markdown {
             value.optionalIndexOf(rendered, offset)
               .map(at => Replacement(at, rendered.length))
           )
-
-      lazy val chunk = math.max(raw.length, rendered.length)
     }
 
     abstract class Block(val open: Tag, val close: Tag, val nested: Boolean = false) {
@@ -26,8 +24,6 @@ package object markdown {
       def startsIn(input: String, offset: Int) = open.isIn(input, offset)
 
       def endsIn(input: String, offset: Int) = close.isIn(input, offset)
-
-      lazy val chunk = math.max(open.chunk, close.chunk)
     }
 
     case class H(i: Int) extends Block(
@@ -53,17 +49,20 @@ package object markdown {
 
     type Blocks = List[Block]
 
-    val languages: Blocks = List("scala", "java", "bash", "javascript").map(Language.apply) ::: InlineCode :: Nil
+    val languages: Blocks = List("scala", "javascript", "java", "bash").map(Language.apply) ::: InlineCode :: Nil
 
     val headings: Blocks = 6.to(1, -1).map(H.apply).toList
 
-    val supported: Blocks =  languages ::: headings ::: Bold :: Italic :: Nil
+    val supported: Blocks = languages ::: headings ::: Bold :: Italic :: Nil
 
     case class Replacement(index: Int, length: Int) {
 
       def end = index + length
     }
 
+    case class Rendered(block: Block, value: String)
+
+    type Partition = Either[Rendered, String]
   }
 
   private object Util {
@@ -80,10 +79,6 @@ package object markdown {
 
     import Abstractions._
 
-    type Partition = Either[Rendered, String]
-
-    case class Rendered(block: Block, value: String)
-
     case class Partitioned(parts: List[Partition] = List.empty) {
 
       def render: String = parts.foldLeft("") { case (acc, part: Partition) =>
@@ -95,28 +90,35 @@ package object markdown {
       }
 
       def +(partition: Partition): Partitioned = copy(parts = parts :+ partition)
+
+      def ~>(block: Block): Partitioned = ???
     }
 
-    @tailrec
-    def partition(input: String, by: Block, offset: Int = 0,
-                  acc: Partitioned = Partitioned()): Partitioned = {
-      if (offset >= input.length) acc
-      else {
-        lazy val `default` = acc.copy(parts = acc.parts :+ Right(input.substring(offset)))
+    object Partitioned {
 
-        by.startsIn(input, offset) match {
-          case Some(start) =>
-            by.endsIn(input, start.index + 1) match {
-              case Some(end) =>
-                partition(
-                  input, by, end.end,
-                  acc +
-                    Right(input.substring(offset, start.index)) +
-                    Left(Rendered(by, input.substring(start.end, end.index)))
-                )
-              case _ => `default`
-            }
-          case _ => `default`
+      def apply(input: String, by: Block) = partition(input, by)
+
+      @tailrec
+      private def partition(input: String, by: Block, offset: Int = 0,
+                            acc: Partitioned = Partitioned()): Partitioned = {
+        if (offset >= input.length) acc
+        else {
+          lazy val `default` = acc.copy(parts = acc.parts :+ Right(input.substring(offset)))
+
+          by.startsIn(input, offset) match {
+            case Some(start) =>
+              by.endsIn(input, start.index + 1) match {
+                case Some(end) =>
+                  partition(
+                    input, by, end.end,
+                    acc +
+                      Right(input.substring(offset, start.index)) +
+                      Left(Rendered(by, input.substring(start.end, end.index)))
+                  )
+                case _ => `default`
+              }
+            case _ => `default`
+          }
         }
       }
     }
