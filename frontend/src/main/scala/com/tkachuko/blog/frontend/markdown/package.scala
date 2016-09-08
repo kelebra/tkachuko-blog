@@ -12,18 +12,23 @@ package object markdown {
 
       def isIn(value: String, offset: Int): Option[Replacement] =
         value.optionalIndexOf(raw, offset)
-          .map(at => Replacement(at, raw.length))
+          .map(at => Replacement(at, raw.length, isRendered = false))
           .orElse(
             value.optionalIndexOf(rendered, offset)
-              .map(at => Replacement(at, rendered.length))
+              .map(at => Replacement(at, rendered.length, isRendered = true))
           )
+
+      def isIn(value: String, offset: Int, shouldBeRendered: Boolean): Option[Replacement] = {
+        val tagToSearch = if (shouldBeRendered) rendered else raw
+        value.optionalIndexOf(tagToSearch, offset).map(at => Replacement(at, tagToSearch.length, shouldBeRendered))
+      }
     }
 
     abstract class Block(val open: Tag, val close: Tag, val nested: Boolean = false) {
 
       def startsIn(input: String, offset: Int) = open.isIn(input, offset)
 
-      def endsIn(input: String, offset: Int) = close.isIn(input, offset)
+      def endsIn(input: String, rendered: Boolean, offset: Int) = close.isIn(input, offset, rendered)
     }
 
     case class H(i: Int) extends Block(
@@ -61,9 +66,9 @@ package object markdown {
 
     val headings: Blocks = 6.to(1, -1).map(H.apply).toList
 
-    val supported: Blocks = languages ::: headings ::: Href :: ItalicBold :: Bold :: Italic ::  Nil
+    val supported: Blocks = languages ::: headings ::: Href :: ItalicBold :: Bold :: Italic :: Nil
 
-    case class Replacement(index: Int, length: Int) {
+    case class Replacement(index: Int, length: Int, isRendered: Boolean) {
 
       def end = index + length
     }
@@ -126,7 +131,7 @@ package object markdown {
 
           by.startsIn(input, offset) match {
             case Some(start) =>
-              by.endsIn(input, start.index + 1) match {
+              by.endsIn(input, start.isRendered, start.index + 1) match {
                 case Some(end) =>
                   partition(
                     input, by, end.end,
@@ -154,8 +159,7 @@ package object markdown {
 
     def md: String = {
       val seed = Partitioned(text, supported.head)
-      val partitioned = supported.tail.foldLeft(seed) { case (acc, block) => acc ~> block }
-      partitioned render
+      supported.tail.foldLeft(seed) { case (acc, block) => acc ~> block } render
     }
   }
 
