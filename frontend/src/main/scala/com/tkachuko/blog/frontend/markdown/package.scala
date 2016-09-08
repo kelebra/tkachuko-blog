@@ -31,8 +31,12 @@ package object markdown {
     )
 
     case class Language(name: String) extends Block(
-      Tag(s"```$name\n", s"<pre><code class = 'language-$name'>\n"),
-      Tag(s"```\n", s"</code></pre>\n")
+      Tag(s"```$name", s"""<pre><code class="language-$name">"""),
+      Tag(s"```", s"</code></pre>")
+    )
+
+    case object Href extends Block(
+      Tag("<a", "<a"), Tag("</a>", "</a>")
     )
 
     case object Italic extends Block(
@@ -41,6 +45,10 @@ package object markdown {
 
     case object Bold extends Block(
       Tag("__", "<b>"), Tag("__", "</b>"), nested = true
+    )
+
+    case object ItalicBold extends Block(
+      Tag("___", "<b><i>"), Tag("___", "</i></b>"), nested = true
     )
 
     case object InlineCode extends Block(
@@ -53,7 +61,7 @@ package object markdown {
 
     val headings: Blocks = 6.to(1, -1).map(H.apply).toList
 
-    val supported: Blocks = languages ::: headings ::: Bold :: Italic :: Nil
+    val supported: Blocks = languages ::: headings ::: Href :: ItalicBold :: Bold :: Italic ::  Nil
 
     case class Replacement(index: Int, length: Int) {
 
@@ -82,28 +90,39 @@ package object markdown {
     case class Partitioned(parts: List[Partition] = List.empty) {
 
       def render: String = parts.foldLeft("") { case (acc, part: Partition) =>
-        acc + (
-          part match {
-            case Left(rendered) => rendered.block.open.rendered + rendered.value + rendered.block.close.rendered
-            case Right(value) => value
-          })
+        acc + part.fold(
+          rendered => rendered.block.open.rendered + rendered.value + rendered.block.close.rendered,
+          identity[String]
+        )
       }
 
       def +(partition: Partition): Partitioned = copy(parts = parts :+ partition)
 
-      def ~>(block: Block): Partitioned = ???
+      def ~>(block: Block): Partitioned = {
+        import Partitioned._
+
+        Partitioned(parts.flatMap(
+          _.fold(
+            rendered =>
+              if (rendered.block.nested)
+                Left(rendered.copy(value = Partitioned(rendered.value, block).render)) :: Nil
+              else Left(rendered) :: Nil,
+            value => partition(value, block)
+          )
+        ))
+      }
     }
 
     object Partitioned {
 
-      def apply(input: String, by: Block) = partition(input, by)
+      def apply(input: String, by: Block): Partitioned = Partitioned(partition(input, by))
 
       @tailrec
-      private def partition(input: String, by: Block, offset: Int = 0,
-                            acc: Partitioned = Partitioned()): Partitioned = {
+      def partition(input: String, by: Block, offset: Int = 0,
+                    acc: List[Partition] = List.empty): List[Partition] = {
         if (offset >= input.length) acc
         else {
-          lazy val `default` = acc.copy(parts = acc.parts :+ Right(input.substring(offset)))
+          lazy val `default` = acc :+ Right(input.substring(offset))
 
           by.startsIn(input, offset) match {
             case Some(start) =>
@@ -111,8 +130,8 @@ package object markdown {
                 case Some(end) =>
                   partition(
                     input, by, end.end,
-                    acc +
-                      Right(input.substring(offset, start.index)) +
+                    acc :+
+                      Right(input.substring(offset, start.index)) :+
                       Left(Rendered(by, input.substring(start.end, end.index)))
                   )
                 case _ => `default`
@@ -122,6 +141,7 @@ package object markdown {
         }
       }
     }
+
   }
 
   /**
@@ -129,7 +149,14 @@ package object markdown {
     */
   implicit class MarkdownString(text: String) {
 
-    def md: String = ???
+    import Abstractions.supported
+    import Algorithm.Partitioned
+
+    def md: String = {
+      val seed = Partitioned(text, supported.head)
+      val partitioned = supported.tail.foldLeft(seed) { case (acc, block) => acc ~> block }
+      partitioned render
+    }
   }
 
 }
