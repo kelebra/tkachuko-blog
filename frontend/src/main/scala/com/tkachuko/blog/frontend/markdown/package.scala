@@ -40,7 +40,7 @@ package object markdown {
       Tag(s"```", s"</code></pre>")
     )
 
-    case object Href extends Block(
+    case object HrefIgnorance extends Block(
       Tag("<a", "<a"), Tag("</a>", "</a>")
     )
 
@@ -66,7 +66,7 @@ package object markdown {
 
     val headings: Blocks = 6.to(1, -1).map(H.apply).toList
 
-    val supported: Blocks = languages ::: headings ::: Href :: ItalicBold :: Bold :: Italic :: Nil
+    val supported: Blocks = languages ::: headings ::: HrefIgnorance :: ItalicBold :: Bold :: Italic :: Nil
 
     case class Replacement(index: Int, length: Int, isRendered: Boolean) {
 
