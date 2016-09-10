@@ -9,5 +9,8 @@ import scala.scalajs.js.annotation.JSExport
 object Blog extends js.JSApp {
 
   @JSExport
-  def main(): Unit = Router(window.location.href)
+  def main(): Unit = {
+    Router(window.location.href)
+    Router.setupHistoryListener()
+  }
 }

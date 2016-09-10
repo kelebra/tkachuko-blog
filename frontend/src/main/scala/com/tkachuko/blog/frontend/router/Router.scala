@@ -6,11 +6,17 @@ import org.scalajs.dom._
 
 object Router {
 
-  def apply(url: String) = url match {
-    case post if url.containsPost => Posts.loadOne(post.postTitle)(BlogView.apply(_).render)
-    case tag if url.containsTag => Posts.loadWithTag(tag.tag)(BlogView.apply(_).render)
-    case _ => Posts.loadAll(BlogView.apply(_).render)
+  def apply(url: String) = {
+    url match {
+      case post if url.containsPost => Posts.loadOne(post.postTitle)(BlogView.apply(_).render)
+      case tag if url.containsTag => Posts.loadWithTag(tag.tag)(BlogView.apply(_).render)
+      case _ => Posts.loadAll(BlogView.apply(_).render)
+    }
+    url.render()
   }
+
+  def setupHistoryListener() =
+    window.addEventListener("popstate", (event: PopStateEvent) => Router(window.location.href))
 
   implicit class URLOps(value: String) {
 
@@ -28,7 +34,14 @@ object Router {
 
     def tag = value.split(tagSuffix).last
 
-    def toTagUrl = s"${window.location.host}/blog$jsUrlSuffix$tagSuffix$value"
+    def toTagUrl = s"/blog$jsUrlSuffix$tagSuffix$value"
+
+    def toPostUrl = s"/blog$jsUrlSuffix$postSuffix$value"
+
+    def render(): Unit = {
+      val currentValue = window.location.href
+      if (currentValue != value) window.location.href = value
+    }
   }
 
 }

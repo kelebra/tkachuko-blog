@@ -1,6 +1,8 @@
 package com.tkachuko.blog.frontend.views
 
 import com.tkachuko.blog.frontend.markdown.MarkdownString
+import com.tkachuko.blog.frontend.router.Router
+import com.tkachuko.blog.frontend.router.Router.URLOps
 import com.tkachuko.blog.frontend.util.Util._
 import com.tkachuko.blog.models.Post
 import org.scalajs.dom.{Element, MouseEvent}
@@ -12,13 +14,14 @@ class PostView(post: Post) {
   def renderIn(container: Element) = {
     val title = post.title
     val tagsElementId = s"tags - $title"
+    val postUrl = title.toPostUrl
 
     container.appendChild(
       div(
         `class` := "item",
         div(
           `class` := "content",
-          a(`class` := "ui block header", onclick := onTitleClick(container), h1(title)),
+          a(`class` := "ui block header", href := postUrl, onclick := onTitleClick(postUrl), h1(title)),
           div(
             id := tagsElementId,
             `class` := "meta",
@@ -34,11 +37,7 @@ class PostView(post: Post) {
     replaceElementContent(title.byId, post.content.md, br.render)
   }
 
-  private def onTitleClick(container: Element): MouseEvent => Unit = event => {
-    replaceElementContent(container)
-    renderIn(container)
-    highlightCode()
-  }
+  private def onTitleClick(url: String): MouseEvent => Unit = event => Router(url)
 }
 
 object PostView {
