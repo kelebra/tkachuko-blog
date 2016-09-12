@@ -29,6 +29,8 @@ package object markdown {
       def startsIn(input: String, offset: Int) = open.isIn(input, offset)
 
       def endsIn(input: String, rendered: Boolean, offset: Int) = close.isIn(input, offset, rendered)
+
+      def render(value: String) = open.rendered + value + close.rendered
     }
 
     case class H(i: Int) extends Block(
@@ -60,13 +62,31 @@ package object markdown {
       Tag("`", "<code>"), Tag("`", "</code>")
     )
 
+    case object OrderedList extends Block(Tag("\n\n", "\n<ul>\n"), Tag("\n\n", "\n</ul>\n"), nested = true) {
+
+      val liEncoded = "* "
+      val liDecoded = "<li>"
+      val liSuffix = "</li>"
+
+      override def render(value: String): String = {
+        val lines = value.split("\n")
+        super.render(
+          lines.map {
+            case li if li.startsWith(liEncoded) => liDecoded + li.substring(liEncoded.length) + liSuffix
+            case other => other
+          }.mkString("\n")
+        )
+      }
+    }
+
     type Blocks = List[Block]
 
     val languages: Blocks = List("scala", "javascript", "java", "bash").map(Language.apply) ::: InlineCode :: Nil
 
     val headings: Blocks = 6.to(1, -1).map(H.apply).toList
 
-    val supported: Blocks = languages ::: headings ::: HrefIgnorance :: ItalicBold :: Bold :: Italic :: Nil
+    val supported: Blocks = languages ::: headings ::: HrefIgnorance :: OrderedList ::
+      ItalicBold :: Bold :: Italic :: Nil
 
     case class Replacement(index: Int, length: Int, isRendered: Boolean) {
 
@@ -96,7 +116,7 @@ package object markdown {
 
       def render: String = parts.foldLeft("") { case (acc, part: Partition) =>
         acc + part.fold(
-          rendered => rendered.block.open.rendered + rendered.value + rendered.block.close.rendered,
+          rendered => rendered.block.render(rendered.value),
           identity[String]
         )
       }

@@ -35,6 +35,12 @@ trait Md {
       |<a href = "_ignored_"></a>
       |## Italic, bold, italic-bold:
       |__hello__ - this is bold, ___hello___ - this is italic bold, _hello_ - this is italic
+      |## This is lists:
+      |
+      |
+      |* Item 1
+      |* Item 2
+      |
     """.stripMargin,
     """
       |<h1>This is small demo of all supported features in this Markdown parser</h1>
@@ -66,6 +72,12 @@ trait Md {
       |<a href = "_ignored_"></a>
       |<h2>Italic, bold, italic-bold:</h2>
       |<b>hello</b> - this is bold, <b><i>hello</i></b> - this is italic bold, <i>hello</i> - this is italic
+      |<h2>This is lists:</h2>
+      |
+      |<ul>
+      |<li>Item 1</li>
+      |<li>Item 2</li>
+      |</ul>
     """.stripMargin
     )
 
