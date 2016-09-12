@@ -210,10 +210,6 @@ object MarkdownRenderSpec extends TestSuite with HTML with Md {
       `quoted post`.md ==> `quoted post`
     }
 
-    "render fully md post" - {
-      println(`markdown post`.md)
-    }
-
     "render list in markdown content" - {
       val markdown =
         "\n\n" +
