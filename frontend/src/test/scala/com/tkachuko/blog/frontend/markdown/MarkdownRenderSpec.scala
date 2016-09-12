@@ -210,6 +210,63 @@ object MarkdownRenderSpec extends TestSuite with HTML with Md {
       `quoted post`.md ==> `quoted post`
     }
 
+    "render fully md post" - {
+      println(`markdown post`.md)
+    }
+
+    "render list in markdown content" - {
+      val markdown =
+        "\n\n" +
+          "* _furthermostSoFar_ - number of steps it is possible to make to our current best knowledge\n" +
+          "* _board_ - array(list) of values which indicate how many steps allowed at step (index) _i_" +
+          "\n\n"
+
+      markdown.md ==>
+        "\n<ul>\n" +
+          "<li><i>furthermostSoFar</i> - number of steps it is possible to make to our current best knowledge</li>\n" +
+          "<li><i>board</i> - array(list) of values which indicate how many steps allowed at step (index) <i>i</i></li>\n" +
+          "</ul>\n"
+    }
+
+    "render simple list content" - {
+      val markdown =
+        """
+          |
+          |* Item 1
+          |* Item 2
+          |
+        """.stripMargin
+      markdown.md ==>
+        """
+          |<ul>
+          |<li>Item 1</li>
+          |<li>Item 2</li>
+          |</ul>
+        """.stripMargin
+    }
+
+    "render list content with h2" - {
+      val markdown =
+        """
+          |Let's define what is known:
+          |
+          |* Size of the ladder _N_
+          |* _a<sub>i</sub>_ - number of steps that you can make at step _i_
+          |
+          |### Task #1: define if you can win in a given game situation:
+        """.stripMargin
+
+      markdown.md ==>
+        """
+          |Let's define what is known:
+          |<ul>
+          |<li>Size of the ladder <i>N</i></li>
+          |<li><i>a<sub>i</sub></i> - number of steps that you can make at step <i>i</i></li>
+          |</ul>
+          |<h3>Task #1: define if you can win in a given game situation:</h3>
+        """.stripMargin
+    }
+
     def checkWithTimeLogging(data: Data) = {
       val bytes = data._1.getBytes.length
       val start = System.currentTimeMillis()
