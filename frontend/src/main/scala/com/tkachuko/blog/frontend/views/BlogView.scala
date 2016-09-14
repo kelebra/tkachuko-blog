@@ -10,7 +10,9 @@ class BlogView(posts: List[Post]) {
   def render = {
     replaceBodyWith(sideBar, staticContent)
 
-    posts.map(post => PostView(post)).foreach(_.renderIn("posts".byId))
+    val renderComments = posts.tail.isEmpty
+
+    posts.map(PostView(_, renderComments)).foreach(_.renderIn("posts".byId))
     posts.tags.map(TagView.apply).foreach(_.renderInText("sidebar".byId))
 
     highlightCode()
