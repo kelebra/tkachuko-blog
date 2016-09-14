@@ -9,7 +9,7 @@ import org.scalajs.dom.{Element, MouseEvent}
 
 import scalatags.JsDom.all._
 
-class PostView(post: Post) {
+class PostView(post: Post, comments: Boolean) {
 
   def renderIn(container: Element) = {
     val title = post.title
@@ -33,8 +33,9 @@ class PostView(post: Post) {
     )
 
     post.tags.map(TagView.apply).foreach(_.renderInColor(tagsElementId.byId))
-
     replaceElementContent(title.byId, post.content.md, br.render)
+
+    if (comments) CommentsView(title).render(container)
   }
 
   private def onTitleClick(url: String): MouseEvent => Unit = event => Router(url)
@@ -42,5 +43,5 @@ class PostView(post: Post) {
 
 object PostView {
 
-  def apply(post: Post) = new PostView(post)
+  def apply(post: Post, comments: Boolean) = new PostView(post, comments)
 }

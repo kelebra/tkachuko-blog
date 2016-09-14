@@ -42,6 +42,8 @@ object Router {
       val currentValue = window.location.href
       if (currentValue != value) window.location.href = value
     }
+
+    def sanitize = value.filter(_.isLetterOrDigit)
   }
 
 }
