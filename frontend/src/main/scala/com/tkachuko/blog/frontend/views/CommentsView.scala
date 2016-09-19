@@ -5,7 +5,7 @@ import org.scalajs.dom.Element
 
 import scalatags.JsDom.all._
 
-class CommentsView(title: String, thread: String) {
+class CommentsView(url: String, title: String, identifier: Int) {
 
   def render(container: Element) = {
     container.appendChild(commentsContainer)
@@ -18,8 +18,8 @@ class CommentsView(title: String, thread: String) {
     raw(
       s"""
          |    var disqus_config = function () {
-         |        this.page.url = 'http://tkachuko.info/blog/$thread';
-         |        this.page.identifier = '${title.hashCode}';
+         |        this.page.url = '$url';
+         |        this.page.identifier = '$identifier';
          |        this.page.title = '$title';
          |    };
          |
@@ -38,6 +38,8 @@ class CommentsView(title: String, thread: String) {
 
 object CommentsView {
 
-  def apply(title: String) = new CommentsView(title, title.sanitize)
+  def disqusUrl(title: String) = s"http://tkachuko.info/blog/${title.sanitize}"
+
+  def apply(title: String) = new CommentsView(disqusUrl(title), title, title.hashCode)
 }
 
