@@ -263,6 +263,25 @@ object MarkdownRenderSpec extends TestSuite with HTML with Md {
         """.stripMargin
     }
 
+    "render code with type parameters" - {
+      val markdown =
+        """
+          |Some code with diamonds:
+          |
+          |```java
+          |Node<T> node = ...
+          |```
+        """.stripMargin
+      markdown.md ==>
+        """
+          |Some code with diamonds:
+          |
+          |<pre><code class="language-java">
+          |Node<T> node = ...
+          |</code></pre>
+        """.stripMargin
+    }
+
     def checkWithTimeLogging(data: Data) = {
       val bytes = data._1.getBytes.length
       val start = System.currentTimeMillis()
