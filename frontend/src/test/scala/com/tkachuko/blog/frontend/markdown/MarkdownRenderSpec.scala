@@ -2,7 +2,7 @@ package com.tkachuko.blog.frontend.markdown
 
 import utest._
 
-object MarkdownRenderSpec extends TestSuite with HTML with Md {
+object MarkdownRenderSpec extends TestSuite with Md {
 
   val tests = TestSuite {
 
@@ -202,14 +202,6 @@ object MarkdownRenderSpec extends TestSuite with HTML with Md {
       html.md ==> html
     }
 
-    "not change unquoted html content" - {
-      `unquoted post`.md ==> `unquoted post`
-    }
-
-    "not change quoted html content" - {
-      `quoted post`.md ==> `quoted post`
-    }
-
     "render list in markdown content" - {
       val markdown =
         "\n\n" +
@@ -260,6 +252,25 @@ object MarkdownRenderSpec extends TestSuite with HTML with Md {
           |<li><i>a<sub>i</sub></i> - number of steps that you can make at step <i>i</i></li>
           |</ul>
           |<h3>Task #1: define if you can win in a given game situation:</h3>
+        """.stripMargin
+    }
+
+    "render code with type parameters" - {
+      val markdown =
+        """
+          |Some code with diamonds:
+          |
+          |```java
+          |Node<T> node = ...
+          |```
+        """.stripMargin
+      markdown.md ==>
+        """
+          |Some code with diamonds:
+          |
+          |<pre><code class="language-java">
+          |Node&lt;T&gt; node = ...
+          |</code></pre>
         """.stripMargin
     }
 

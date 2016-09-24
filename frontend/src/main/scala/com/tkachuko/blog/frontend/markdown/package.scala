@@ -1,6 +1,7 @@
 package com.tkachuko.blog.frontend
 
 import scala.annotation.tailrec
+import scala.language.postfixOps
 
 package object markdown {
 
@@ -33,6 +34,20 @@ package object markdown {
       def render(value: String) = open.rendered + value + close.rendered
     }
 
+    case class Replacement(index: Int, length: Int, isRendered: Boolean) {
+
+      def end = index + length
+    }
+
+    case class Rendered(block: Block, value: String)
+
+    type Partition = Either[Rendered, String]
+  }
+
+  private object Implementation {
+
+    import com.tkachuko.blog.frontend.markdown.Abstractions.{Block, Tag}
+
     case class H(i: Int) extends Block(
       Tag(s"${(1 to i).map(_ => "#").mkString} ", s"<h$i>"), Tag("\n", s"</h$i>\n")
     )
@@ -40,7 +55,17 @@ package object markdown {
     case class Language(name: String) extends Block(
       Tag(s"```$name", s"""<pre><code class="language-$name">"""),
       Tag(s"```", s"</code></pre>")
-    )
+    ) {
+
+      val escape = Map(
+        "<" -> "&lt;",
+        ">" -> "&gt;"
+      )
+
+      override def render(value: String): String = super.render(
+        escape.foldLeft(value) { case (state, mapping) => state.replaceAll(mapping._1, mapping._2) }
+      )
+    }
 
     case object HrefIgnorance extends Block(
       Tag("<a", "<a"), Tag("</a>", "</a>")
@@ -87,15 +112,6 @@ package object markdown {
 
     val supported: Blocks = languages ::: headings ::: HrefIgnorance :: OrderedList ::
       ItalicBold :: Bold :: Italic :: Nil
-
-    case class Replacement(index: Int, length: Int, isRendered: Boolean) {
-
-      def end = index + length
-    }
-
-    case class Rendered(block: Block, value: String)
-
-    type Partition = Either[Rendered, String]
   }
 
   private object Util {
@@ -174,8 +190,8 @@ package object markdown {
     */
   implicit class MarkdownString(text: String) {
 
-    import Abstractions.supported
     import Algorithm.Partitioned
+    import Implementation.supported
 
     def md: String = {
       val seed = Partitioned(text, supported.head)
