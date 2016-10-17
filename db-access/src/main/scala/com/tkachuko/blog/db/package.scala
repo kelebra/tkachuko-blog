@@ -1,7 +1,7 @@
 package com.tkachuko.blog
 
 import com.tkachuko.blog.db.IO._
-import com.tkachuko.blog.models.{Post, Subscription}
+import com.tkachuko.blog.models.Post
 import com.typesafe.config.ConfigFactory
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.WriteResult
@@ -27,7 +27,7 @@ package object db {
       private val queryAll = BSONDocument()
       private val chronologicalOrder = BSONDocument("created" -> -1)
 
-      val collection: Future[BSONCollection] = connection.map(_ (Names.posts))
+      private val collection: Future[BSONCollection] = connection.map(_ (Names.posts))
 
       def all(): Future[List[Post]] = collection.flatMap(
         _.find(queryAll).sort(chronologicalOrder).cursor[Post]().collect[List]()
@@ -47,15 +47,6 @@ package object db {
           _.find(BSONDocument("$or" -> conditions)).sort(chronologicalOrder).cursor[Post]().collect[List]()
         )
       }
-    }
-
-    object Subscriptions {
-
-      val collection: Future[BSONCollection] = connection.map(_ (Names.subscriptions))
-
-      def count(): Future[Int] = collection.flatMap(_.count())
-
-      def insert(subscription: Subscription): Future[WriteResult] = collection.flatMap(_.insert(subscription))
     }
 
     lazy val connection = MongoConnection.parseURI(uri) match {

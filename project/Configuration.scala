@@ -23,7 +23,7 @@ object Configuration {
   lazy val modelsSettings = commonSettings
 
   lazy val dbAccessSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(typesafeConfig, mongo)
+    libraryDependencies ++= Seq(typesafeConfig, mongo, akkaTestkit)
   }
 
   lazy val utilSettings = commonSettings :+ {
@@ -31,7 +31,14 @@ object Configuration {
   }
 
   lazy val backendSettings = commonSettings :+ {
-    libraryDependencies ++= Seq(http, testkit, json)
+    libraryDependencies ++= Seq(http, httpTestkit, json)
+  } :+ {
+
+    lazy val runWeb = inputKey[Unit]("Runs web server locally")
+
+    runWeb := {
+      (runMain in Compile).fullInput(" com.tkachuko.blog.backend.WebServer 127.0.0.1 9090").evaluated
+    }
   }
 
   lazy val rootSettings = commonSettings
@@ -53,5 +60,6 @@ object Dependencies {
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.0"
   val http: ModuleID = "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2"
   val json: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.2"
-  val testkit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.4.2-RC3"
+  val httpTestkit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.4.2-RC3"
+  val akkaTestkit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % "2.4.2"
 }

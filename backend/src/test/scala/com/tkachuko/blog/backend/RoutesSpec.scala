@@ -2,15 +2,17 @@ package com.tkachuko.blog.backend
 
 import akka.http.scaladsl.model.{HttpEntity, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.tkachuko.blog.backend.WebServer.RestService.routes
+import com.tkachuko.blog.backend.rest.RestService
 import com.tkachuko.blog.backend.static.StaticDataResolver._
 import com.tkachuko.blog.db.{Database, InMemoryMongo}
 import com.tkachuko.blog.models.{Post => BlogPost}
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
-class RoutesSpec extends WordSpec with Matchers with ScalatestRouteTest {
+class RoutesSpec extends WordSpecLike with Matchers with ScalatestRouteTest with BeforeAndAfterAll {
 
   "Web server" should {
+
+    val routes = RestService(system).routes
 
     "return homepage for GET request to the root path" in {
       Get() ~> routes ~> check {
@@ -37,13 +39,6 @@ class RoutesSpec extends WordSpec with Matchers with ScalatestRouteTest {
       Get(s"/$postByTitle/hello") ~> routes ~> check {
         status === StatusCodes.Success
         responseAs[String] should not be empty
-      }
-    }
-
-    "return true or false after subscription via the /subscribe" in {
-      Get(s"/$subscribe/email") ~> routes ~> check {
-        status === StatusCodes.Success
-        responseAs[String] shouldBe "true"
       }
     }
 
