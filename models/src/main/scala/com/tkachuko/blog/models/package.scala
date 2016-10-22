@@ -7,6 +7,4 @@ package object models {
                   tags: List[String] = List.empty,
                   created: Double = System.currentTimeMillis())
 
-  case class Subscription(email: String)
-
 }

@@ -16,8 +16,6 @@ object StaticDataResolver {
 
   val postsByTags = "tags"
 
-  val subscribe = "subscribe"
-
   val frontend = "frontend-fastopt.js"
 
   val frontendJs = frontend.asPlainResource
