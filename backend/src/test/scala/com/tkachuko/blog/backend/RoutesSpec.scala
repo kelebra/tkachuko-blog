@@ -4,7 +4,8 @@ import akka.http.scaladsl.model.{HttpEntity, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.tkachuko.blog.backend.rest.RestService
 import com.tkachuko.blog.backend.static.StaticDataResolver._
-import com.tkachuko.blog.db.{Database, InMemoryMongo}
+import com.tkachuko.blog.db.InMemoryMongo
+import com.tkachuko.blog.db.internal.Database
 import com.tkachuko.blog.models.{Post => BlogPost}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
@@ -52,10 +53,11 @@ class RoutesSpec extends WordSpecLike with Matchers with ScalatestRouteTest with
 
   override protected def beforeAll(): Unit = {
     InMemoryMongo.start()
-    Database.Posts.insert(BlogPost("hello", "hi"))
-    Database.Posts.insert(BlogPost("hello1", "hi", List("akka", "scala")))
-    Database.Posts.insert(BlogPost("hello2", "hi", List("scala")))
-    Database.Posts.insert(BlogPost("hello3", "hi", List("akka")))
+    val repository = new Database.Posts()
+    repository.insert(BlogPost("hello", "hi"))
+    repository.insert(BlogPost("hello1", "hi", List("akka", "scala")))
+    repository.insert(BlogPost("hello2", "hi", List("scala")))
+    repository.insert(BlogPost("hello3", "hi", List("akka")))
   }
 
   override protected def afterAll(): Unit = {

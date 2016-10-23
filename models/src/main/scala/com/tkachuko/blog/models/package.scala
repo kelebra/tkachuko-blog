@@ -2,9 +2,13 @@ package com.tkachuko.blog
 
 package object models {
 
-  case class Post(title: String,
-                  content: String,
-                  tags: List[String] = List.empty,
-                  created: Double = System.currentTimeMillis())
+  type Content = String
+  type Title = String
+  type Tags = List[String]
+  type Millis = Double
 
+  case class Post(title: Title,
+                  content: Content,
+                  tags: Tags = List.empty,
+                  created: Millis = System.currentTimeMillis())
 }

@@ -4,7 +4,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.{Backoff, BackoffSupervisor, ask}
 import akka.util.Timeout
 import com.tkachuko.blog.client._
-import com.tkachuko.blog.db.DbActor
+import com.tkachuko.blog.db.actor.DbActor
 import com.tkachuko.blog.models.Post
 
 import scala.concurrent.ExecutionContext.Implicits.global

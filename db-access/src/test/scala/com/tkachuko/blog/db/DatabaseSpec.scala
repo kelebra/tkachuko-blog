@@ -3,6 +3,8 @@ package com.tkachuko.blog.db
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
 import com.tkachuko.blog.client._
+import com.tkachuko.blog.db.actor.DbActor
+import com.tkachuko.blog.db.internal.Database
 import com.tkachuko.blog.models.Post
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
@@ -53,11 +55,12 @@ class DatabaseSpec extends TestKit(ActorSystem("DatabaseActorSpec")) with Implic
 
   override protected def beforeAll(): Unit = {
     InMemoryMongo.start()
-    Database.Posts.insert(Post("Title1", "Hello!")).await
-    Database.Posts.insert(Post("Title2", "Hello!")).await
-    Database.Posts.insert(Post("Title3", "Hello!", List("akka", "scala"))).await
-    Database.Posts.insert(Post("Title4", "Hello!", List("akka"))).await
-    Database.Posts.insert(Post("Title5", "Hello!", List("scala"))).await
+    val repository = new Database.Posts()
+    repository.insert(Post("Title1", "Hello!")).await
+    repository.insert(Post("Title2", "Hello!")).await
+    repository.insert(Post("Title3", "Hello!", List("akka", "scala"))).await
+    repository.insert(Post("Title4", "Hello!", List("akka"))).await
+    repository.insert(Post("Title5", "Hello!", List("scala"))).await
   }
 
   override def afterAll(): Unit = {
