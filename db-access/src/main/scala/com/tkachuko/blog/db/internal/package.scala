@@ -17,12 +17,13 @@ package object internal {
   val config = ConfigFactory.load("db.conf")
   val name = config.getString("db.name")
 
+  import IO._
+
   object Database extends MongoConnectivity {
 
     class Posts(collection: => Future[BSONCollection] = posts)
       extends PostRepository {
 
-      import IO._
 
       def query: Future[List[Post]] = collection.flatMap(
         _.find(queryAll).sort(chronologicalOrder).cursor[Post]().collect[List]()
@@ -48,7 +49,6 @@ package object internal {
 
   trait MongoConnectivity {
 
-    import IO.Names
 
     private val uri = config.getString("db.uri")
 
