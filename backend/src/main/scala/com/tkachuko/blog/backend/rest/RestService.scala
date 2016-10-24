@@ -5,7 +5,6 @@ import akka.http.scaladsl.server.Directives
 import com.tkachuko.blog.backend.connector.RemoteDaoConnector
 import com.tkachuko.blog.backend.json.JsonSupport
 import com.tkachuko.blog.backend.static.StaticDataResolver._
-import com.tkachuko.blog.db.Database
 import spray.json._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,7 +38,7 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
       post {
         path(postsByTags) {
           entity(as[String]) { tags =>
-            complete(Database.Posts.findByTags(tags.comaSeparatedList))
+            complete(findPostsByTags(tags.comaSeparatedList))
           }
         }
       }

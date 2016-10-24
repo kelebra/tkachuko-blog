@@ -1,22 +1,22 @@
 package com.tkachuko.blog.db.namespace
 
 import com.tkachuko.blog.client._
-import com.tkachuko.blog.db.Database
+import com.tkachuko.blog.db.repository.PostRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object PostsRequestHandler extends NamespaceResolution {
+case class PostsRequestHandler(repository: PostRepository) extends NamespaceResolution {
 
   val namespace: Namespace = Posts
 
   def process(request: Request): Future[Reply[_]] = (
     request match {
-      case all: All => Database.Posts.all()
-      case search: FindByTitle => Database.Posts.findByTitle(search.title)
-      case search: FindByTags => Database.Posts.findByTags(search.tags)
-      case count: Count => Database.Posts.count()
-      case insert: Insert => Database.Posts.insert(insert.post)
+      case all: All => repository.query
+      case search: FindByTitle => repository.query(search.title)
+      case search: FindByTags => repository.query(search.tags)
+      case count: Count => repository.count
+      case insert: Insert => repository.insert(insert.post)
       case _ => Future.successful(
         request.failure(s"Operation ${request.getClass.getSimpleName} is not supported")
       )
