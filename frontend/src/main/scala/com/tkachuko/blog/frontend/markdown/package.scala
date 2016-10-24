@@ -63,7 +63,7 @@ package object markdown {
       )
 
       override def render(value: String): String = super.render(
-        escape.foldLeft(value) { case (state, mapping) => state.replaceAll(mapping._1, mapping._2) }
+        escape.foldLeft(value) { case (state, (utf, html)) => state.replaceAll(utf, html) }
       )
     }
 

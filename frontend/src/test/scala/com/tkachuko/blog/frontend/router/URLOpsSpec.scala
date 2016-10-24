@@ -19,7 +19,7 @@ object URLOpsSpec extends TestSuite {
 
     "be used to extract post title" - {
       val url = "http://domain:port/resource#post=hello%20world"
-      url.postTitle ==> "hello%20world"
+      url.title ==> Option("hello%20world")
     }
   }
 }

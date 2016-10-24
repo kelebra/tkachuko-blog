@@ -73,9 +73,9 @@ class DatabaseSpec extends TestKit(ActorSystem("DatabaseActorSpec")) with Implic
     def await: T = Await.result(future, 10 seconds)
   }
 
-  implicit class TryAssertion[T](t : Reply[T]) {
+  implicit class TryAssertion[T](reply : Reply[T]) {
 
-    def result: T = t.data.get
+    def result: T = reply.data.getOrElse(throw new RuntimeException("Did not get expect value"))
   }
 
 }

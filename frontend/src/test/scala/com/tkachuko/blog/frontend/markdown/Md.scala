@@ -89,6 +89,7 @@ trait Md {
 
   private def *(data: Data)(value: Int): Data = {
     def populate(s: String): String = (0 to value)./:(s) { case (acc, _) => acc + s }
-    (populate(data._1), populate(data._2))
+    val (raw, rendered) = data
+    (populate(raw), populate(rendered))
   }
 }

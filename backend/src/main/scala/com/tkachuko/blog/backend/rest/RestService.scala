@@ -17,7 +17,7 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
         homePage
       } ~
         path(resourcePrefix / Rest) { resource =>
-          resource.asWebResource
+          resource.webResource
         } ~
         path(frontend) {
           frontendJs
