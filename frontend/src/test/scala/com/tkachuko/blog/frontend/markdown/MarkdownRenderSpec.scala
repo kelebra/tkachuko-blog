@@ -275,11 +275,12 @@ object MarkdownRenderSpec extends TestSuite with Md {
     }
 
     def checkWithTimeLogging(data: Data) = {
-      val bytes = data._1.getBytes.length
+      val (input, expected) = data
+      val bytes = input.getBytes.length
       val start = System.currentTimeMillis()
-      val md = data._1.md
+      val md = input.md
       println(s"MD rendering took: ${System.currentTimeMillis() - start} ms for $bytes bytes")
-      md ==> data._2
+      md ==> expected
     }
 
     "render small markdown sample" - {

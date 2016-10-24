@@ -31,5 +31,5 @@ object TagView {
 
   def apply(tag: String) = new TagView(tag)
 
-  def onTagClick(tag: String): MouseEvent => Unit = event => Router(tag.toTagUrl)
+  def onTagClick(tag: String): MouseEvent => Unit = event => Router(tag.tagUrl)
 }

@@ -8,8 +8,10 @@ object Router {
 
   def apply(url: String) = {
     url match {
-      case post if url.containsPost => Posts.loadOne(post.postTitle)(BlogView.apply(_).render)
-      case tag if url.containsTag => Posts.loadWithTag(tag.tag)(BlogView.apply(_).render)
+      case post if url.containsPost =>
+        post.title.foreach(title => Posts.loadOne(title)(BlogView.apply(_).render))
+      case tag if url.containsTag =>
+        tag.tag.foreach(name => Posts.loadWithTag(name)(BlogView.apply(_).render))
       case _ => Posts.loadAll(BlogView.apply(_).render)
     }
     url.render()
@@ -30,13 +32,13 @@ object Router {
 
     def containsTag = value.contains(s"$jsUrlSuffix$tagSuffix")
 
-    def postTitle = value.split(postSuffix).last
+    def title = value.split(postSuffix).lastOption
 
-    def tag = value.split(tagSuffix).last
+    def tag = value.split(tagSuffix).lastOption
 
-    def toTagUrl = s"/blog$jsUrlSuffix$tagSuffix$value"
+    def tagUrl = s"/blog$jsUrlSuffix$tagSuffix$value"
 
-    def toPostUrl = s"/blog$jsUrlSuffix$postSuffix$value"
+    def postUrl = s"/blog$jsUrlSuffix$postSuffix$value"
 
     def render(): Unit = {
       val currentValue = window.location.href

@@ -14,7 +14,7 @@ class PostView(post: Post, comments: Boolean) {
   def renderIn(container: Element) = {
     val title = post.title
     val tagsElementId = s"tags - $title"
-    val postUrl = title.toPostUrl
+    val postUrl = title.postUrl
 
     container.appendChild(
       div(

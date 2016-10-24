@@ -40,7 +40,9 @@ object Util {
           "hour(s)" -> duration / TimeUnit.HOURS.toMillis(1),
           "minute(s)" -> duration / TimeUnit.MINUTES.toMillis(1),
           "second(s)" -> duration / TimeUnit.SECONDS.toMillis(1)
-        ).mapValues(math.abs).filter(_._2 > 0).minBy(_._2)
+        ).mapValues(math.abs)
+          .filter { case (_, elapsed) => elapsed > 0 }
+          .minBy { case (_, elapsed) => elapsed }
       s"$value $unit"
     }
   }
