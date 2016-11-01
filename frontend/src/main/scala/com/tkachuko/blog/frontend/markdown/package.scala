@@ -25,13 +25,19 @@ package object markdown {
       }
     }
 
-    abstract class Block(val open: Tag, val close: Tag, val nested: Boolean = false) {
+    trait Block {
 
       def startsIn(input: String, offset: Int) = open.isIn(input, offset)
 
       def endsIn(input: String, rendered: Boolean, offset: Int) = close.isIn(input, offset, rendered)
 
       def render(value: String) = open.rendered + value + close.rendered
+
+      def open: Tag
+
+      def close: Tag
+
+      def nested: Boolean = false
     }
 
     case class Replacement(index: Int, length: Int, isRendered: Boolean) {
@@ -48,14 +54,17 @@ package object markdown {
 
     import com.tkachuko.blog.frontend.markdown.Abstractions.{Block, Tag}
 
-    case class H(i: Int) extends Block(
-      Tag(s"${(1 to i).map(_ => "#").mkString} ", s"<h$i>"), Tag("\n", s"</h$i>\n")
-    )
+    case class H(i: Int) extends Block {
+      def open = Tag(s"${(1 to i).map(_ => "#").mkString} ", s"<h$i>")
 
-    case class Language(name: String) extends Block(
-      Tag(s"```$name", s"""<pre><code class="language-$name">"""),
-      Tag(s"```", s"</code></pre>")
-    ) {
+      def close = Tag("\n", s"</h$i>\n")
+    }
+
+    case class Language(name: String) extends Block {
+
+      def open = Tag(s"```$name", s"""<pre><code class="language-$name">""")
+
+      def close = Tag(s"```", s"</code></pre>")
 
       val escape = Map(
         "<" -> "&lt;",
@@ -67,27 +76,64 @@ package object markdown {
       )
     }
 
-    case object HrefIgnorance extends Block(
-      Tag("<a", "<a"), Tag("</a>", "</a>")
-    )
+    object Graphics extends Language("graph") {
 
-    case object Italic extends Block(
-      Tag("_", "<i>"), Tag("_", "</i>"), nested = true
-    )
+      override val escape = Map.empty[String, String]
 
-    case object Bold extends Block(
-      Tag("__", "<b>"), Tag("__", "</b>"), nested = true
-    )
+      override def open: Tag = super.open.copy(rendered = "<div class=\"mermaid\">")
 
-    case object ItalicBold extends Block(
-      Tag("___", "<b><i>"), Tag("___", "</i></b>"), nested = true
-    )
+      override def close: Tag = super.close.copy(rendered = "</div>")
+    }
 
-    case object InlineCode extends Block(
-      Tag("`", "<code>"), Tag("`", "</code>")
-    )
+    case object HrefIgnorance extends Block {
 
-    case object OrderedList extends Block(Tag("\n\n", "\n<ul>\n"), Tag("\n\n", "\n</ul>\n"), nested = true) {
+      def open = Tag("<a", "<a")
+
+      def close = Tag("</a>", "</a>")
+    }
+
+    case object Italic extends Block {
+
+      def open = Tag("_", "<i>")
+
+      def close = Tag("_", "</i>")
+
+      override def nested = true
+    }
+
+    case object Bold extends Block {
+
+      def open = Tag("__", "<b>")
+
+      def close = Tag("__", "</b>")
+
+      override def nested = true
+
+    }
+
+    case object ItalicBold extends Block {
+      def open = Tag("___", "<b><i>")
+
+      def close = Tag("___", "</i></b>")
+
+      override def nested = true
+    }
+
+
+    case object InlineCode extends Block {
+
+      def open = Tag("`", "<code>")
+
+      def close = Tag("`", "</code>")
+    }
+
+    case object OrderedList extends Block {
+
+      def open = Tag("\n\n", "\n<ul>\n")
+
+      def close = Tag("\n\n", "\n</ul>\n")
+
+      override def nested = true
 
       val liEncoded = "* "
       val liDecoded = "<li>"
@@ -106,7 +152,8 @@ package object markdown {
 
     type Blocks = List[Block]
 
-    val languages: Blocks = List("scala", "javascript", "java", "bash").map(Language.apply) ::: InlineCode :: Nil
+    val languages: Blocks = List("scala", "javascript", "java", "bash").map(Language.apply) :::
+      Graphics :: InlineCode :: Nil
 
     val headings: Blocks = 6.to(1, -1).map(H.apply).toList
 

@@ -274,6 +274,31 @@ object MarkdownRenderSpec extends TestSuite with Md {
         """.stripMargin
     }
 
+    "render graphics block with graph inside" - {
+      val markdown =
+        """
+          |Some code with graphics tag inside:
+          |
+          |```graph
+          |    A-->B
+          |    B-->C
+          |    C-->A
+          |    D-->C
+          |```
+        """.stripMargin
+      markdown.md ==>
+        """
+          |Some code with graphics tag inside:
+          |
+          |<div class="mermaid">
+          |    A-->B
+          |    B-->C
+          |    C-->A
+          |    D-->C
+          |</div>
+        """.stripMargin
+    }
+
     def checkWithTimeLogging(data: Data) = {
       val (input, expected) = data
       val bytes = input.getBytes.length

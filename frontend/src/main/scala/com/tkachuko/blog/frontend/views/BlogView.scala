@@ -16,6 +16,7 @@ class BlogView(posts: List[Post]) {
     posts.tags.map(TagView.apply).foreach(_.renderInText("sidebar".byId))
 
     highlightCode()
+    renderGraphics()
   }
 
   private def sideBar =
