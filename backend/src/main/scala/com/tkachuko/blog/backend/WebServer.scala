@@ -10,7 +10,7 @@ import scala.concurrent.Future
 
 object WebServer {
 
-  implicit val system = ActorSystem("tkachuko-system")
+  implicit val system = ActorSystem("tkachuko-web-system")
   implicit val mat = ActorMaterializer()
   implicit val ec = system.dispatcher
 
@@ -21,10 +21,11 @@ object WebServer {
     val binding: Future[Http.ServerBinding] =
       serverSource.to(Sink.foreach(_.handleWith(RestService(system).routes))).run
 
-    binding.onFailure {
-      case e: Exception =>
-        println(e)
-        system.terminate()
-    }
+    binding
+      .onFailure {
+        case any: Any =>
+          system.log.error(s"Could not proceed because of exception: $any")
+          system.terminate()
+      }
   }
 }

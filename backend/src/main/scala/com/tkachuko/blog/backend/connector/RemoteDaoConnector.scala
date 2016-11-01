@@ -1,7 +1,7 @@
 package com.tkachuko.blog.backend.connector
 
-import akka.actor.{ActorRef, ActorSystem}
-import akka.pattern.{Backoff, BackoffSupervisor, ask}
+import akka.actor.{ActorRef, ActorSystem, PoisonPill}
+import akka.pattern.ask
 import akka.util.Timeout
 import com.tkachuko.blog.client._
 import com.tkachuko.blog.db.actor.DbActor
@@ -20,16 +20,9 @@ trait RemoteDaoConnector {
   implicit val system: ActorSystem
   implicit val timeout: Timeout = 30 seconds
 
-  val supervisorProps = BackoffSupervisor.props(
-    Backoff.onFailure(
-      DbActor.props,
-      childName = "database-actor",
-      minBackoff = 3 seconds,
-      maxBackoff = 30 seconds,
-      randomFactor = 0.2
-    ))
+  val log = system.log
 
-  private val supervisor: ActorRef = system.actorOf(supervisorProps, name = "database-supervisor-actor")
+  private def dbActor: ActorRef = system.actorOf(DbActor.props, name = "database-actor")
 
   def allPosts: Result[List[Post]] = askFor(All(), List.empty[Post])
 
@@ -41,7 +34,10 @@ trait RemoteDaoConnector {
 
   private def askFor[T <: Request, K](request: T, default: K): Result[K] = {
     system.log.info(s"Sending request: $request with id ${request.id}")
-    (supervisor ? request).dispatch[K](default)
+    val actor = dbActor
+    val result = (actor ? request).dispatch[K](default)
+    result.onComplete { case _ => actor ! PoisonPill }
+    result
   }
 
   private implicit class ReplyDispatcher(result: Future[Any]) {
@@ -50,13 +46,15 @@ trait RemoteDaoConnector {
       .map(_.asInstanceOf[Reply[T]])
       .map(
         reply => reply.data match {
-          case Success(value) => value
+          case Success(value) =>
+            log.info(s"Reply for id ${reply.correlation} was successful")
+            value
           case Failure(exception) =>
-            system.log.error(s"Request ${reply.correlation} failed. " +
+            log.error(s"Reply ${reply.correlation} failed. " +
               s"Default reply will be returned. Message: ${exception.getMessage}")
             default
         }
-      )
+      ).recoverWith { case e => log.error(e, "Could not get reply"); Future.successful(default) }
   }
 
 }
