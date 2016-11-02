@@ -47,10 +47,10 @@ trait RemoteDaoConnector {
       .map(
         reply => reply.data match {
           case Success(value) =>
-            log.info(s"Reply for id ${reply.correlation} was successful")
+            log.info(s"Request with id ${reply.correlation} was successful")
             value
           case Failure(exception) =>
-            log.error(s"Reply ${reply.correlation} failed. " +
+            log.error(s"Request ${reply.correlation} failed. " +
               s"Default reply will be returned. Message: ${exception.getMessage}")
             default
         }
