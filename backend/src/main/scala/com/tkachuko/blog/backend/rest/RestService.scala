@@ -14,6 +14,7 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
   val routes =
     get {
       pathSingleSlash {
+        log.info("Returning home page")
         homePage
       } ~
         path(resourcePrefix / Rest) { resource =>
@@ -23,12 +24,15 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
           frontendJs
         } ~
         path(blog ~ Slash.? ~ Rest.?) { _ =>
+          log.info("Returning blog page")
           blogPage
         } ~
         path(posts) {
+          log.info("Requesting all posts")
           complete(allPosts)
         } ~
         path(postByTitle / Rest) { title =>
+          log.info(s"Requesting for post with title '$title'")
           complete(findPostsByTitle(title.withoutHttpSpaces))
         } ~
         path(posts / count) {
@@ -38,6 +42,7 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
       post {
         path(postsByTags) {
           entity(as[String]) { tags =>
+            log.info(s"Requesting posts with tags '$tags'")
             complete(findPostsByTags(tags.comaSeparatedList))
           }
         }

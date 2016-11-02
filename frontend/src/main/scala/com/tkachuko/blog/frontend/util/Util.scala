@@ -62,6 +62,8 @@ object Util {
 
   def highlightCode() = js.eval("Prism.highlightAll();")
 
+  def renderGraphics() = js.eval("mermaid.init();")
+
   def onSideBarToggle(): MouseEvent => Unit = event => {
     js.eval("$('#sidebar').sidebar('toggle');")
     js.eval("$('.ui.dropdown').dropdown();")
