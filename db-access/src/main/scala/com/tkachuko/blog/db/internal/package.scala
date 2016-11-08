@@ -14,9 +14,6 @@ import scala.util.Success
 
 package object internal {
 
-  val config = ConfigFactory.load("db.conf")
-  val name = config.getString("db.name")
-
   import IO._
 
   object Database extends MongoConnectivity {
@@ -49,8 +46,8 @@ package object internal {
 
   trait MongoConnectivity {
 
-
-    private val uri = config.getString("db.uri")
+    private val config = ConfigFactory.load("db.conf")
+    private val (name, uri) = (config.getString("db.name"), config.getString("db.uri"))
 
     lazy val connection = MongoConnection.parseURI(uri) match {
       case Success(parsedUri) => new MongoDriver().connection(parsedUri).database(name)
@@ -71,8 +68,6 @@ package object internal {
     object Names {
 
       val posts = "posts"
-
-      val subscriptions = "subscriptions"
     }
 
   }
