@@ -47,3 +47,7 @@ lazy val frontend = (project in file("frontend"))
     ): _*)
   .disablePlugins(sbtassembly.AssemblyPlugin)
   .enablePlugins(ScalaJSPlugin)
+
+lazy val deploy = TaskKey[Unit]("deploy", "Deploys assembled jar to server")
+
+deploy <<= Tasks.deployWebServer(backend)

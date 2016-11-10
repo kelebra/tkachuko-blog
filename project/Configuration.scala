@@ -1,6 +1,13 @@
+import java.awt.Desktop
+
 import Dependencies._
+import com.decodified.scalassh.{HostConfig, PasswordLogin}
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier
 import sbt.Keys._
 import sbt._
+import sbtassembly.AssemblyKeys
+import com.decodified.scalassh.SshClient
+import jassh.SSH.shell
 
 object Configuration {
 
@@ -32,14 +39,7 @@ object Configuration {
 
   lazy val backendSettings = commonSettings :+ {
     libraryDependencies ++= Seq(http, httpTestkit, json)
-  } :+ {
-
-    lazy val runWeb = inputKey[Unit]("Runs web server locally")
-
-    runWeb := {
-      (runMain in Compile).fullInput(" com.tkachuko.blog.backend.WebServer 127.0.0.1 9090").evaluated
-    }
-  }
+  } :+ Tasks.runLocally
 
   lazy val rootSettings = commonSettings
 
@@ -62,4 +62,55 @@ object Dependencies {
   val json: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json-experimental" % "2.4.2"
   val httpTestkit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit-experimental" % "2.4.2-RC3"
   val akkaTestkit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % "2.4.2"
+}
+
+object Tasks {
+
+  val runLocally = {
+
+    lazy val runWeb = inputKey[Unit]("Runs web server locally")
+
+    runWeb := {
+      (runMain in Compile).fullInput(" com.tkachuko.blog.backend.WebServer 127.0.0.1 9090").evaluated
+    }
+  }
+
+  def deployWebServer(project: Project) = {
+
+    def deployAndRunJar(jar: File): Unit = {
+
+      val (host, user, password, target) = ("198.211.104.55", "root", readLine("Enter ssh password : "), "~/blog.jar")
+
+      println(s"Stopping running java processes in $host")
+      shell(host = host, username = user, password = password) {
+        sh =>
+          import sh._
+          kill(ps().filter(_.cmdline.contains("blog.jar")).map(_.pid))
+      }
+
+      println(s"Copying jar to $host as $target")
+      SshClient(
+        host = host,
+        HostConfig(
+          login = PasswordLogin(user, password),
+          hostName = host,
+          hostKeyVerifier = new PromiscuousVerifier())
+      ) match {
+        case Right(client) => client.upload(jar.getAbsolutePath, target).fold(println, identity[Unit])
+        case Left(error) => println(error)
+      }
+
+      println(s"Running $target on $host")
+      shell(host = host, username = user, password = password) {
+        sh =>
+          import sh._
+          execute(s"nohup java -jar $target 0.0.0.0 80 &")
+      }
+
+      println("Deployment done. §Opening blog page...")
+      Desktop.getDesktop.browse(new URI("http://tkachuko.info"))
+    }
+
+    ((AssemblyKeys.assembly in project) dependsOn (clean in project)) map { file => deployAndRunJar(file) }
+  }
 }
