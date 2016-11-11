@@ -50,4 +50,4 @@ lazy val frontend = (project in file("frontend"))
 
 lazy val deploy = TaskKey[Unit]("deploy", "Deploys assembled jar to server")
 
-deploy <<= Tasks.deployWebServer(backend)
+deploy <<= Tasks.deployWebServer(backend, ConsoleLogger())
