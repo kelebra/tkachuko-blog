@@ -5,7 +5,7 @@ import akka.testkit.{ImplicitSender, TestKit}
 import com.tkachuko.blog.client._
 import com.tkachuko.blog.db.actor.DbActor
 import com.tkachuko.blog.db.internal.Database
-import com.tkachuko.blog.models.Post
+import com.tkachuko.blog.models.{Post, PostInfo}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
@@ -28,6 +28,13 @@ class DatabaseSpec extends TestKit(ActorSystem("DatabaseActorSpec")) with Implic
     "retrieve all posts in chronological order" in {
       databaseActor ! All()
       val reply = expectMsgClass(classOf[Reply[List[Post]]])
+      reply.result.map(_.title) shouldBe List("Title5", "Title4", "Title3", "Title2", "Title1")
+    }
+
+    "retrieve only post infos in chronological order" in {
+      databaseActor ! AllInfo()
+      val reply = expectMsgClass(classOf[Reply[List[PostInfo]]])
+      println(reply.result)
       reply.result.map(_.title) shouldBe List("Title5", "Title4", "Title3", "Title2", "Title1")
     }
 

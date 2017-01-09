@@ -14,14 +14,13 @@ class PostView(post: Post, comments: Boolean) {
   def renderIn(container: Element) = {
     val title = post.title
     val tagsElementId = s"tags - $title"
-    val postUrl = title.postUrl
 
     container.appendChild(
       div(
         `class` := "item",
         div(
           `class` := "content",
-          a(`class` := "ui block header", href := postUrl, onclick := onTitleClick(postUrl), h1(title)),
+          div(`class` := "ui block header", h1(title)),
           div(
             id := tagsElementId,
             `class` := "meta",
@@ -37,11 +36,11 @@ class PostView(post: Post, comments: Boolean) {
 
     if (comments) CommentsView(title).render(container)
   }
-
-  private def onTitleClick(url: String): MouseEvent => Unit = event => Router(url)
 }
 
 object PostView {
 
   def apply(post: Post, comments: Boolean) = new PostView(post, comments)
+
+  def onTitleClick(title: String): MouseEvent => Unit = event => Router(title.postUrl)
 }

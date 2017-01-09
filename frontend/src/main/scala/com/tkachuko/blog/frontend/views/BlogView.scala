@@ -1,19 +1,26 @@
 package com.tkachuko.blog.frontend.views
 
 import com.tkachuko.blog.frontend.util.Util._
-import com.tkachuko.blog.models.Post
+import com.tkachuko.blog.models.{Post, PostInfo}
 
 import scalatags.JsDom.all._
 
-class BlogView(posts: List[Post]) {
+object BlogView {
 
-  def render = {
+  def renderPosts(posts: List[Post]): Unit = render(() => {
+    posts.map(PostView(_, posts.tail.isEmpty)).foreach(_.renderIn("posts".byId))
+    posts.tags.map(TagView.apply).foreach(_.renderInText("sidebar".byId))
+  })
+
+  def renderPostsInfo(infos: List[PostInfo]): Unit = render(() => {
+    infos.map(PostInfoView.apply).foreach(_.renderIn(BlogView.posts))
+    infos.tags.map(TagView.apply).foreach(_.renderInText(BlogView.sidebar))
+  })
+
+  private def render(`content renderer`: () => Unit) = {
     replaceBodyWith(sideBar, staticContent)
 
-    val renderComments = posts.tail.isEmpty
-
-    posts.map(PostView(_, renderComments)).foreach(_.renderIn("posts".byId))
-    posts.tags.map(TagView.apply).foreach(_.renderInText("sidebar".byId))
+    `content renderer`()
 
     highlightCode()
     renderGraphics()
@@ -42,14 +49,12 @@ class BlogView(posts: List[Post]) {
         `class` := "ui container",
         div(
           id := "posts",
-          `class` := "ui relaxed divided items"
+          `class` := "ui relaxed divided items four stackable cards"
         )
       )
     ).render
 
-}
+  def posts = "posts".byId
 
-object BlogView {
-
-  def apply(posts: List[Post]) = new BlogView(posts)
+  def sidebar = "sidebar".byId
 }

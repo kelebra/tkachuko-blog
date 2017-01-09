@@ -1,6 +1,6 @@
 package com.tkachuko.blog.frontend.router
 
-import com.tkachuko.blog.frontend.controllers.Posts
+import com.tkachuko.blog.frontend.controllers.{Posts, PostsInfo}
 import com.tkachuko.blog.frontend.views.BlogView
 import org.scalajs.dom._
 
@@ -9,10 +9,10 @@ object Router {
   def apply(url: String) = {
     url match {
       case post if url.containsPost =>
-        post.title.foreach(title => Posts.loadOne(title)(BlogView.apply(_).render))
+        post.title.foreach(title => Posts.loadOne(title)(BlogView.renderPosts))
       case tag if url.containsTag =>
-        tag.tag.foreach(name => Posts.loadWithTag(name)(BlogView.apply(_).render))
-      case _ => Posts.loadAll(BlogView.apply(_).render)
+        tag.tag.foreach(name => Posts.loadWithTag(name)(BlogView.renderPosts))
+      case _ => PostsInfo.loadAll(BlogView.renderPostsInfo)
     }
     url.render()
   }

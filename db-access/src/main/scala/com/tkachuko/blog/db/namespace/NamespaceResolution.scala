@@ -2,6 +2,7 @@ package com.tkachuko.blog.db.namespace
 
 import com.tkachuko.blog.client.{Namespace, Reply, Request}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -21,4 +22,14 @@ trait NamespaceResolution extends PartialFunction[Any, Future[Reply[_]]] {
   def apply(value: Any): Future[Reply[_]] = process(value.asInstanceOf[Request])
 
   def process(request: Request): Future[Reply[_]]
+
+  implicit class FutureReply[T](future: Future[T]) {
+
+    def reply(request: Request) = future map {
+      case data: T => request.success(data)
+    } recover {
+      case error: Throwable => request.failure(error.getMessage)
+    }
+  }
+
 }

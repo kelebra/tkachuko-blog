@@ -2,7 +2,7 @@ package com.tkachuko.blog.frontend.util
 
 import java.util.concurrent.TimeUnit
 
-import com.tkachuko.blog.models.Post
+import com.tkachuko.blog.models.{Post, PostInfo}
 import org.scalajs.dom.{Element, MouseEvent, Node, document}
 
 import scala.scalajs.js
@@ -16,9 +16,16 @@ object Util {
     def posts: List[Post] = read[List[Post]](json)
 
     def post: Post = read[Post](json)
+
+    def postsInfo: List[PostInfo] = read[List[PostInfo]](json)
   }
 
-  implicit class TagsExtractor(posts: List[Post]) {
+  implicit class PostTagsExtractor(posts: List[Post]) {
+
+    def tags: Set[String] = posts.flatMap(_.tags).toSet
+  }
+
+  implicit class PostInfoTagsExtractor(posts: List[PostInfo]) {
 
     def tags: Set[String] = posts.flatMap(_.tags).toSet
   }

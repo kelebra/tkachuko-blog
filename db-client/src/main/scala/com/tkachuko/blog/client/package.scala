@@ -35,4 +35,12 @@ package object client {
 
   case class Count() extends Request(Posts)
 
+  /**
+    * Requests that are under PostInfo namespace
+    */
+
+  case object PostsDescriptions extends Namespace
+
+  case class AllInfo() extends Request(PostsDescriptions)
+
 }

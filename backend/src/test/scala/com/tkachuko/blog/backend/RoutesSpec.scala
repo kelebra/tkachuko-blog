@@ -36,6 +36,13 @@ class RoutesSpec extends WordSpecLike with Matchers with ScalatestRouteTest with
       }
     }
 
+    "return all posts info as json for GET to the /posts/info" in {
+      Get(s"/$posts/info") ~> routes ~> check {
+        status === StatusCodes.Success
+        responseAs[String] should not be empty
+      }
+    }
+
     "return single post as json for GET to the /post/id" in {
       Get(s"/$postByTitle/hello") ~> routes ~> check {
         status === StatusCodes.Success
