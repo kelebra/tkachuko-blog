@@ -5,7 +5,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.tkachuko.blog.client._
 import com.tkachuko.blog.db.actor.DbActor
-import com.tkachuko.blog.models.Post
+import com.tkachuko.blog.models.{Post, PostInfo}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -13,7 +13,7 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
-trait RemoteDaoConnector {
+trait RepositoryConnector {
 
   type Result[T] = Future[T]
 
@@ -25,6 +25,8 @@ trait RemoteDaoConnector {
   private def dbActor: ActorRef = system.actorOf(DbActor.props, name = "database-actor")
 
   def allPosts: Result[List[Post]] = askFor(All(), List.empty[Post])
+
+  def allPostsInfo: Result[List[PostInfo]] = askFor(AllInfo(), List.empty[PostInfo])
 
   def findPostsByTitle(title: String): Result[Option[Post]] = askFor(FindByTitle(title), None)
 

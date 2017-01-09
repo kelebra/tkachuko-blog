@@ -1,7 +1,7 @@
 package com.tkachuko.blog.db
 
-import com.tkachuko.blog.db.repository.PostRepository
-import com.tkachuko.blog.models.{Post, Tags, Title}
+import com.tkachuko.blog.db.repository.{PostInfoRepository, PostRepository}
+import com.tkachuko.blog.models._
 import com.typesafe.config.ConfigFactory
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.commands.WriteResult
@@ -14,12 +14,10 @@ import scala.util.Success
 
 package object internal {
 
-  import IO._
-
   object Database extends MongoConnectivity {
 
     class Posts(collection: => Future[BSONCollection] = posts)
-      extends PostRepository {
+      extends PostRepository with BsonFormatSupport {
 
 
       def query: Future[List[Post]] = collection.flatMap(
@@ -42,6 +40,24 @@ package object internal {
       def insert(post: Post): Future[WriteResult] = collection.flatMap(_.insert(post))
     }
 
+    class PostsDescription(collection: => Future[BSONCollection] = posts)
+      extends PostInfoRepository with BsonFormatSupport {
+
+
+      def query: Future[List[PostInfo]] = collection.flatMap(
+        _.find(queryAll).sort(chronologicalOrder).cursor[PostInfo]().collect[List]()
+      )
+    }
+
+  }
+
+  trait BsonFormatSupport {
+
+    implicit val postBsonReader: BSONDocumentReader[Post] = Macros.reader[Post]
+    implicit val postBsonWriter: BSONDocumentWriter[Post] = Macros.writer[Post]
+
+    implicit val postInfoBsonReader: BSONDocumentReader[PostInfo] = Macros.reader[PostInfo]
+    implicit val postInfoBsonWriter: BSONDocumentWriter[PostInfo] = Macros.writer[PostInfo]
   }
 
   trait MongoConnectivity {
@@ -60,16 +76,9 @@ package object internal {
     val chronologicalOrder = BSONDocument("created" -> -1)
   }
 
-  private object IO {
+  private object Names {
 
-    implicit val postBsonReader: BSONDocumentReader[Post] = Macros.reader[Post]
-    implicit val postBsonWriter: BSONDocumentWriter[Post] = Macros.writer[Post]
-
-    object Names {
-
-      val posts = "posts"
-    }
-
+    val posts = "posts"
   }
 
 }

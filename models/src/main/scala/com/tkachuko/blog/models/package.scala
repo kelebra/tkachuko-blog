@@ -11,4 +11,7 @@ package object models {
                   content: Content,
                   tags: Tags = List.empty,
                   created: Millis = System.currentTimeMillis())
+
+  case class PostInfo(title: Title, tags: Tags, created: Millis)
+
 }

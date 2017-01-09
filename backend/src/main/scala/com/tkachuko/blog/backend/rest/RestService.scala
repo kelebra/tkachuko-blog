@@ -1,15 +1,17 @@
 package com.tkachuko.blog.backend.rest
 
+import java.net.URLDecoder
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives
-import com.tkachuko.blog.backend.connector.RemoteDaoConnector
+import com.tkachuko.blog.backend.connector.RepositoryConnector
 import com.tkachuko.blog.backend.json.JsonSupport
 import com.tkachuko.blog.backend.static.StaticDataResolver._
 import spray.json._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class RestService(val system: ActorSystem) extends Directives with JsonSupport with RemoteDaoConnector {
+class RestService(val system: ActorSystem) extends Directives with JsonSupport with RepositoryConnector {
 
   val routes =
     get {
@@ -37,6 +39,10 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
         } ~
         path(posts / count) {
           complete(postsCount.map(_.toJson))
+        } ~
+        path(posts / info) {
+          log.info("Requesting all posts info")
+          complete(allPostsInfo)
         }
     } ~
       post {
@@ -50,7 +56,7 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
 
   implicit class URLOps(value: String) {
 
-    def withoutHttpSpaces = value.replace("%20", " ")
+    def withoutHttpSpaces = URLDecoder.decode(value, "UTF-8")
 
     def comaSeparatedList = value.split(",").map(_.trim).toList
   }

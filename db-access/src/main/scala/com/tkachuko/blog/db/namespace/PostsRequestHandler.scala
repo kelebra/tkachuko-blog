@@ -3,7 +3,6 @@ package com.tkachuko.blog.db.namespace
 import com.tkachuko.blog.client._
 import com.tkachuko.blog.db.repository.PostRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class PostsRequestHandler(repository: PostRepository) extends NamespaceResolution {
@@ -21,14 +20,4 @@ case class PostsRequestHandler(repository: PostRepository) extends NamespaceReso
         request.failure(s"Operation ${request.getClass.getSimpleName} is not supported")
       )
     }).reply(request)
-
-  implicit class FutureReply[T](future: Future[T]) {
-
-    def reply(request: Request) = future map {
-      case data: T => request.success(data)
-    } recover {
-      case error: Throwable => request.failure(error.getMessage)
-    }
-  }
-
 }
