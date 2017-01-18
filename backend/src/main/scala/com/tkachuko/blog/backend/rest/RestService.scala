@@ -29,13 +29,9 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
           log.info("Returning blog page")
           blogPage
         } ~
-        path(posts) {
-          log.info("Requesting all posts")
-          complete(allPosts)
-        } ~
         path(postByTitle / Rest) { title =>
           log.info(s"Requesting for post with title '$title'")
-          complete(findPostsByTitle(title.withoutHttpSpaces))
+          complete(findPostByTitle(title.withoutHttpSpaces))
         } ~
         path(posts / count) {
           complete(postsCount.map(_.toJson))
@@ -49,7 +45,7 @@ class RestService(val system: ActorSystem) extends Directives with JsonSupport w
         path(postsByTags) {
           entity(as[String]) { tags =>
             log.info(s"Requesting posts with tags '$tags'")
-            complete(findPostsByTags(tags.comaSeparatedList))
+            complete(findPostInfosByTags(tags.comaSeparatedList))
           }
         }
       }

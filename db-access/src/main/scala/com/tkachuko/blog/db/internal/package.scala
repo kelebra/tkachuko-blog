@@ -19,21 +19,9 @@ package object internal {
     class Posts(collection: => Future[BSONCollection] = posts)
       extends PostRepository with BsonFormatSupport {
 
-
-      def query: Future[List[Post]] = collection.flatMap(
-        _.find(queryAll).sort(chronologicalOrder).cursor[Post]().collect[List]()
-      )
-
       def query(title: Title): Future[Option[Post]] = collection.flatMap(
         _.find(BSONDocument("title" -> title)).one[Post]
       )
-
-      def query(tags: Tags): Future[List[Post]] = {
-        val conditions = BSONArray(tags.map(tag => BSONDocument("tags" -> tag)))
-        collection.flatMap(
-          _.find(BSONDocument("$or" -> conditions)).sort(chronologicalOrder).cursor[Post]().collect[List]()
-        )
-      }
 
       def count: Future[Int] = collection.flatMap(_.count())
 
@@ -43,6 +31,12 @@ package object internal {
     class PostsDescription(collection: => Future[BSONCollection] = posts)
       extends PostInfoRepository with BsonFormatSupport {
 
+      def query(tags: Tags): Future[List[PostInfo]] = {
+        val conditions = BSONArray(tags.map(tag => BSONDocument("tags" -> tag)))
+        collection.flatMap(
+          _.find(BSONDocument("$or" -> conditions)).sort(chronologicalOrder).cursor[PostInfo]().collect[List]()
+        )
+      }
 
       def query: Future[List[PostInfo]] = collection.flatMap(
         _.find(queryAll).sort(chronologicalOrder).cursor[PostInfo]().collect[List]()

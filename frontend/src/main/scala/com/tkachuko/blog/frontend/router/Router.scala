@@ -11,10 +11,10 @@ object Router {
       case post if url.containsPost =>
         post.title.foreach(title => Posts.loadOne(title)(BlogView.renderPosts))
       case tag if url.containsTag =>
-        tag.tag.foreach(name => Posts.loadWithTag(name)(BlogView.renderPosts))
+        tag.tag.foreach(name => PostsInfo.loadWithTag(name)(BlogView.renderPostsInfo))
       case _ => PostsInfo.loadAll(BlogView.renderPostsInfo)
     }
-    url.render()
+    url.renderAddressBar()
   }
 
   def setupHistoryListener() =
@@ -40,7 +40,7 @@ object Router {
 
     def postUrl = s"/blog$jsUrlSuffix$postSuffix$value"
 
-    def render(): Unit = {
+    def renderAddressBar(): Unit = {
       val currentValue = window.location.href
       if (currentValue != value) window.location.href = value
     }

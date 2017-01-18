@@ -29,10 +29,6 @@ package object client {
 
   case class FindByTitle(title: String) extends Request(Posts)
 
-  case class FindByTags(tags: List[String]) extends Request(Posts)
-
-  case class All() extends Request(Posts)
-
   case class Count() extends Request(Posts)
 
   /**
@@ -41,6 +37,8 @@ package object client {
 
   case object PostsDescriptions extends Namespace
 
-  case class AllInfo() extends Request(PostsDescriptions)
+  case class All() extends Request(PostsDescriptions)
+
+  case class FindByTags(tags: List[String]) extends Request(PostsDescriptions)
 
 }
