@@ -5,6 +5,7 @@ import com.tkachuko.blog.frontend.util.Util
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom.all._
+import Util.MillisToReadableDifference
 
 object Index extends js.JSApp {
 
@@ -56,22 +57,17 @@ object Index extends js.JSApp {
             div(
               `class` := "item",
               i(`class` := "right aligned battery full icon"),
-              div(`class` := "content", "Java (4+ years experience)")
+              div(`class` := "content", s"Java (${1325397600000.0.readableDifference} experience)")
             ),
             div(
               `class` := "item",
               i(`class` := "right aligned battery high icon"),
-              div(`class` := "content", "Scala (2+ years experience)")
+              div(`class` := "content", s"Scala (${1357020000000.0.readableDifference} experience)")
             ),
             div(
               `class` := "item",
               i(`class` := "right aligned battery medium icon"),
-              div(`class` := "content", "Python (2+ years experience)")
-            ),
-            div(
-              `class` := "item",
-              i(`class` := "right aligned battery low icon"),
-              div(`class` := "content", "JavaScipt (1+ years experience)")
+              div(`class` := "content", s"Python (${1357020000000.0.readableDifference} experience)")
             )
           )
         )
