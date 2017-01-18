@@ -12,7 +12,7 @@ class CommentsView(url: String, title: String, identifier: Int) {
     container.appendChild(loader)
   }
 
-  private def commentsContainer = div(id := "disqus_thread").render
+  private def commentsContainer = div(id := "disqus_thread", `class` := "item").render
 
   private def loader = script(
     raw(
