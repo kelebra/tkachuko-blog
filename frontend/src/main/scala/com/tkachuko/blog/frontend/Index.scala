@@ -62,7 +62,7 @@ object Index extends js.JSApp {
             div(
               `class` := "item",
               i(`class` := "right aligned battery high icon"),
-              div(`class` := "content", s"Scala (${1357020000000.0.readableDifference} experience)")
+              div(`class` := "content", s"Scala (${1388556000000.0.readableDifference} experience)")
             ),
             div(
               `class` := "item",
