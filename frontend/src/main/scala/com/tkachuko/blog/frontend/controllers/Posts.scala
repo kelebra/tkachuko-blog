@@ -12,14 +12,10 @@ object Posts extends AsyncLoader {
 
   type Data = Post
 
-  def loadAll(callback: Callback): Unit =
-    Ajax.get(url = "/posts").onSuccess { case xhr => callback(xhr.responseText.posts) }
+  def loadAll(callback: Callback): Unit = ???
 
   def loadOne(title: Id)(callback: Callback): Unit =
     Ajax.get(url = s"/post/$title").onSuccess { case xhr => callback(List(xhr.responseText.post)) }
-
-  def loadWithTag(tag: String)(callback: Callback): Unit =
-    Ajax.post(url = "/tags", data = tag).onSuccess { case xhr => callback(xhr.responseText.posts) }
 
   def count(callback: StringCallback): Unit =
     Ajax.get(url = "/posts/count").onSuccess { case xhr => callback(xhr.responseText) }

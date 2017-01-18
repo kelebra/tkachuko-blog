@@ -11,7 +11,8 @@ case class PostInfoRequestHandler(repository: PostInfoRepository) extends Namesp
 
   def process(request: Request): Future[Reply[_]] = (
     request match {
-      case all: AllInfo => repository.query
+      case all: All => repository.query
+      case FindByTags(tags) => repository.query(tags)
       case _ => Future.successful(
         request.failure(s"Operation ${request.getClass.getSimpleName} is not supported")
       )

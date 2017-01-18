@@ -11,9 +11,7 @@ case class PostsRequestHandler(repository: PostRepository) extends NamespaceReso
 
   def process(request: Request): Future[Reply[_]] = (
     request match {
-      case all: All => repository.query
       case search: FindByTitle => repository.query(search.title)
-      case search: FindByTags => repository.query(search.tags)
       case count: Count => repository.count
       case insert: Insert => repository.insert(insert.post)
       case _ => Future.successful(

@@ -29,13 +29,6 @@ class RoutesSpec extends WordSpecLike with Matchers with ScalatestRouteTest with
       }
     }
 
-    "return all posts as json for GET to the /posts" in {
-      Get(s"/$posts") ~> routes ~> check {
-        status === StatusCodes.Success
-        responseAs[String] should not be empty
-      }
-    }
-
     "return all posts info as json for GET to the /posts/info" in {
       Get(s"/$posts/info") ~> routes ~> check {
         status === StatusCodes.Success
@@ -50,7 +43,7 @@ class RoutesSpec extends WordSpecLike with Matchers with ScalatestRouteTest with
       }
     }
 
-    "return posts that contain at least one specified tags via /tags" in {
+    "return post infos that contain at least one specified tags via /tags" in {
       Post(s"/$postsByTags", HttpEntity("akka, scala")) ~> routes ~> check {
         status === StatusCodes.Success
         responseAs[String] should not be empty

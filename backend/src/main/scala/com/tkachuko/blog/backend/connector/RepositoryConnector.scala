@@ -24,13 +24,11 @@ trait RepositoryConnector {
 
   private def dbActor: ActorRef = system.actorOf(DbActor.props, name = "database-actor")
 
-  def allPosts: Result[List[Post]] = askFor(All(), List.empty[Post])
+  def allPostsInfo: Result[List[PostInfo]] = askFor(All(), List.empty[PostInfo])
 
-  def allPostsInfo: Result[List[PostInfo]] = askFor(AllInfo(), List.empty[PostInfo])
+  def findPostByTitle(title: String): Result[Option[Post]] = askFor(FindByTitle(title), None)
 
-  def findPostsByTitle(title: String): Result[Option[Post]] = askFor(FindByTitle(title), None)
-
-  def findPostsByTags(tags: List[String]): Result[List[Post]] = askFor(FindByTags(tags), List.empty[Post])
+  def findPostInfosByTags(tags: List[String]): Result[List[PostInfo]] = askFor(FindByTags(tags), List.empty[PostInfo])
 
   def postsCount: Result[Int] = askFor(Count(), 0)
 

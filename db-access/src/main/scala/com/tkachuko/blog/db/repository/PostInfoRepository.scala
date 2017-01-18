@@ -1,6 +1,6 @@
 package com.tkachuko.blog.db.repository
 
-import com.tkachuko.blog.models.PostInfo
+import com.tkachuko.blog.models.{PostInfo, Tags}
 
 import scala.concurrent.Future
 
@@ -10,4 +10,6 @@ import scala.concurrent.Future
 trait PostInfoRepository {
 
   def query: Future[List[PostInfo]]
+
+  def query(tags: Tags): Future[List[PostInfo]]
 }

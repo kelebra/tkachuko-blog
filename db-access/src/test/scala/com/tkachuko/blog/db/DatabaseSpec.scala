@@ -19,26 +19,13 @@ class DatabaseSpec extends TestKit(ActorSystem("DatabaseActorSpec")) with Implic
 
     val databaseActor = DbActor.local
 
-    "retrieve all posts" in {
+    "retrieve all posts info in chronological order" in {
       databaseActor ! All()
-      val reply = expectMsgClass(classOf[Reply[List[Post]]])
-      reply.result.size shouldBe 5
-    }
-
-    "retrieve all posts in chronological order" in {
-      databaseActor ! All()
-      val reply = expectMsgClass(classOf[Reply[List[Post]]])
-      reply.result.map(_.title) shouldBe List("Title5", "Title4", "Title3", "Title2", "Title1")
-    }
-
-    "retrieve only post infos in chronological order" in {
-      databaseActor ! AllInfo()
       val reply = expectMsgClass(classOf[Reply[List[PostInfo]]])
-      println(reply.result)
       reply.result.map(_.title) shouldBe List("Title5", "Title4", "Title3", "Title2", "Title1")
     }
 
-    "retrieve post with tags" in {
+    "retrieve post by title" in {
       databaseActor ! FindByTitle("Title3")
       val reply = expectMsgClass(classOf[Reply[Option[Post]]])
       reply.result.getOrElse(
@@ -46,16 +33,16 @@ class DatabaseSpec extends TestKit(ActorSystem("DatabaseActorSpec")) with Implic
       ).tags should not be empty
     }
 
-    "find posts by tags" in {
+    "find all post infos by tags in chronological order" in {
       databaseActor ! FindByTags(List("scala", "akka"))
-      val reply = expectMsgClass(classOf[Reply[List[Post]]])
-      reply.result.size shouldBe 3
+      val reply = expectMsgClass(classOf[Reply[List[PostInfo]]])
+      reply.result.map(_.title) shouldBe List("Title5", "Title4", "Title3")
     }
 
-    "find all posts by tags in chronological order" in {
-      databaseActor ! FindByTags(List("scala", "akka"))
-      val reply = expectMsgClass(classOf[Reply[List[Post]]])
-      reply.result.map(_.title) shouldBe List("Title5", "Title4", "Title3")
+    "provide count of posts" in {
+      databaseActor ! Count()
+      val reply = expectMsgClass(classOf[Reply[Int]])
+      reply.result shouldBe 5
     }
 
   }

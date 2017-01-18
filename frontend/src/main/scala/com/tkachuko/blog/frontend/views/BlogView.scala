@@ -49,7 +49,7 @@ object BlogView {
         `class` := "ui container",
         div(
           id := "posts",
-          `class` := "ui relaxed divided items four stackable cards"
+          `class` := "ui relaxed divided items four stackable cards", style := "margin: 1em"
         )
       )
     ).render
