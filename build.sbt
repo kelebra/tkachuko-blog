@@ -1,4 +1,5 @@
 import Configuration._
+import DockerConfiguration._
 
 lazy val `tkachuko-blog` = (project in file("."))
   .settings(rootSettings: _*)
@@ -30,6 +31,7 @@ lazy val backend = (project in file("backend"))
         .map((f1, f2) => Seq(f1.data, f2.data)),
     watchSources <++= (watchSources in frontend)
   )
+  .dockerWeb("0.0.0.0", 80)
 
 lazy val frontend = (project in file("frontend"))
   .dependsOn(modelsJs)
@@ -47,7 +49,3 @@ lazy val frontend = (project in file("frontend"))
     ): _*)
   .disablePlugins(sbtassembly.AssemblyPlugin)
   .enablePlugins(ScalaJSPlugin)
-
-lazy val deploy = TaskKey[Unit]("deploy", "Deploys assembled jar to server")
-
-deploy <<= Tasks.deployWebServer(backend, ConsoleLogger())
