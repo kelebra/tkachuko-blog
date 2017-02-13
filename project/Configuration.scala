@@ -6,7 +6,7 @@ object Configuration {
 
   lazy val commonSettings =
     Seq(
-      organization := "com.tkachuko.blog",
+      organization := "tkachuko-blog",
       version := "1.1",
       scalaVersion := Versions.scala,
       scalaBinaryVersion := Versions.scalaBinary,
@@ -48,7 +48,7 @@ object Dependencies {
 
   val scalaTest: ModuleID = "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   val mongo: ModuleID = "org.reactivemongo" %% "reactivemongo" % "0.11.11"
-  val embedMongo = "com.github.simplyscala" %% "scalatest-embedmongo" % "0.2.3"
+  val embedMongo: ModuleID = "com.github.simplyscala" %% "scalatest-embedmongo" % "0.2.3"
   val slf4j: ModuleID = "org.slf4j" % "slf4j-api" % "1.7.21"
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.0"
   val http: ModuleID = "com.typesafe.akka" %% "akka-http-experimental" % "2.4.2"
