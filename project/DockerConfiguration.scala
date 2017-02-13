@@ -26,7 +26,7 @@ object DockerConfiguration {
             }
           },
           imageNames in docker := Seq(
-            ImageName(s"${organization.value}-${name.value}:v${version.value}")
+            ImageName(s"kelebra/${organization.value}-${name.value}:latest")
           )
         )
   }
