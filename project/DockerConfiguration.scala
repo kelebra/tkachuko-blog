@@ -1,4 +1,4 @@
-import sbt.Keys.{name, organization, version}
+import sbt.Keys.{name, organization}
 import sbt.{File, Project}
 import sbtassembly.AssemblyPlugin.autoImport.assembly
 import sbtdocker.DockerPlugin.autoImport.{docker, dockerfile, imageNames}
@@ -22,7 +22,7 @@ object DockerConfiguration {
               from("java")
               add(artifact, artifactTargetPath)
               expose(port)
-              entryPoint("java", "-jar", artifactTargetPath, host, port.toString)
+              entryPoint("nohup", "java", "-jar", artifactTargetPath, host, port.toString, "&")
             }
           },
           imageNames in docker := Seq(
