@@ -9,6 +9,7 @@ object DockerConfiguration {
 
   implicit class DockerProject(project: Project) {
 
+    // Run it with docker run -p 80:80 -d <image name>
     def dockerWeb(host: String, port: Int): Project =
       project
         .enablePlugins(DockerPlugin)
@@ -17,7 +18,6 @@ object DockerConfiguration {
             val artifact: File = assembly.value
             val artifactTargetPath = s"/app/${artifact.getName}"
 
-            // Run it with docker run -p 80:80 <image name>
             new Dockerfile {
               from("java")
               add(artifact, artifactTargetPath)
