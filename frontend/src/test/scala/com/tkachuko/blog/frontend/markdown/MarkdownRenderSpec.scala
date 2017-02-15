@@ -315,5 +315,39 @@ object MarkdownRenderSpec extends TestSuite with Md {
     "render medium markdown sample" - {
       checkWithTimeLogging(medium)
     }
+
+    "renders inside of <a> tag in case of list" - {
+      val markdown =
+        """
+          |Some list with html reference:
+          |
+          |* list item with <a href = 'this_is_href'>label</a>
+          |
+        """.stripMargin
+      markdown.md ==>
+        """
+          |Some list with html reference:
+          |<ul>
+          |<li>list item with <a href = 'this_is_href'>label</a></li>
+          |</ul>
+        """.stripMargin
+    }
+
+    "renders inside of <ul> blocks but not <a>" - {
+      val markdown =
+        """
+          |Some list with html reference:
+          |<ul>
+          |<li>list _item_ with <a href = 'this_is_href'>label</a></li>
+          |</ul>
+        """.stripMargin
+      markdown.md ==>
+        """
+          |Some list with html reference:
+          |<ul>
+          |<li>list <i>item</i> with <a href = 'this_is_href'>label</a></li>
+          |</ul>
+        """.stripMargin
+    }
   }
 }

@@ -45,7 +45,10 @@ package object markdown {
       def end = index + length
     }
 
-    case class Rendered(block: Block, value: String)
+    case class Rendered(block: Block, value: String) {
+
+      def render = block render value
+    }
 
     type Partition = Either[Rendered, String]
   }
@@ -157,7 +160,7 @@ package object markdown {
 
     val headings: Blocks = 6.to(1, -1).map(H.apply).toList
 
-    val supported: Blocks = languages ::: headings ::: HrefIgnorance :: OrderedList ::
+    val supported: Blocks = languages ::: headings ::: OrderedList :: HrefIgnorance ::
       ItalicBold :: Bold :: Italic :: Nil
   }
 
@@ -192,8 +195,7 @@ package object markdown {
         Partitioned(parts.flatMap(
           _.fold(
             rendered =>
-              if (rendered.block.nested)
-                Left(rendered.copy(value = Partitioned(rendered.value, block).render)) :: Nil
+              if (rendered.block.nested) partition(rendered.render, block)
               else Left(rendered) :: Nil,
             value => partition(value, block)
           )
