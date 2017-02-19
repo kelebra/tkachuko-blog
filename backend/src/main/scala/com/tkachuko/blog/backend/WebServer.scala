@@ -3,12 +3,9 @@ package com.tkachuko.blog.backend
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Sink, Source}
+import akka.stream.scaladsl.Sink
 import com.tkachuko.blog.backend.rest.RestService
 import com.tkachuko.blog.db.internal.Database
-import com.tkachuko.blog.db.repository.{PostInfoRepository, PostRepository}
-
-import scala.concurrent.Future
 
 object WebServer {
 
@@ -17,13 +14,10 @@ object WebServer {
   implicit val ec = system.dispatcher
 
   def main(args: Array[String]): Unit = {
-    val serverSource: Source[Http.IncomingConnection, Future[Http.ServerBinding]] =
-      Http().bind(args(0), args(1).toInt)
-
+    val (host, port) = (args(0), args(1).toInt)
+    val serverSource = Http().bind(host, port)
     val routes = RestService.routes(new Database.Posts(), new Database.PostsInfo())
-
-    val binding: Future[Http.ServerBinding] =
-      serverSource.to(Sink.foreach(_.handleWith(routes))).run
+    val binding = serverSource.to(Sink.foreach(_.handleWith(routes))).run
 
     binding
       .onFailure {
