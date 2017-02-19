@@ -5,6 +5,8 @@ import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Sink, Source}
 import com.tkachuko.blog.backend.rest.RestService
+import com.tkachuko.blog.db.internal.Database
+import com.tkachuko.blog.db.repository.{PostInfoRepository, PostRepository}
 
 import scala.concurrent.Future
 
@@ -18,8 +20,10 @@ object WebServer {
     val serverSource: Source[Http.IncomingConnection, Future[Http.ServerBinding]] =
       Http().bind(args(0), args(1).toInt)
 
+    val routes = RestService.routes(new Database.Posts(), new Database.PostsInfo())
+
     val binding: Future[Http.ServerBinding] =
-      serverSource.to(Sink.foreach(_.handleWith(RestService(system).routes))).run
+      serverSource.to(Sink.foreach(_.handleWith(routes))).run
 
     binding
       .onFailure {

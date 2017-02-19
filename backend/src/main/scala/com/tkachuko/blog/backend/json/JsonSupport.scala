@@ -6,7 +6,7 @@ import spray.json._
 
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
-  implicit val postJsonFormat = jsonFormat4(Post)
+  implicit val postJsonFormat: RootJsonFormat[Post] = jsonFormat4(Post)
 
-  implicit val postInfoJsonFormat = jsonFormat3(PostInfo)
+  implicit val postInfoJsonFormat: RootJsonFormat[PostInfo] = jsonFormat3(PostInfo)
 }

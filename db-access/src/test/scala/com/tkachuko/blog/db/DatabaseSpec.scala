@@ -2,10 +2,8 @@ package com.tkachuko.blog.db
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
-import com.tkachuko.blog.client._
-import com.tkachuko.blog.db.actor.DbActor
 import com.tkachuko.blog.db.internal.Database
-import com.tkachuko.blog.models.{Post, PostInfo}
+import com.tkachuko.blog.models.Post
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
@@ -15,34 +13,27 @@ import scala.language.postfixOps
 class DatabaseSpec extends TestKit(ActorSystem("DatabaseActorSpec")) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
 
-  "Database actor" should {
+  val `posts repository` = new Database.Posts()
+  val `info repository` = new Database.PostsInfo()
 
-    val databaseActor = DbActor.local
+  "Repository implementation" should {
 
     "retrieve all posts info in chronological order" in {
-      databaseActor ! All()
-      val reply = expectMsgClass(classOf[Reply[List[PostInfo]]])
-      reply.result.map(_.title) shouldBe List("Title5", "Title4", "Title3", "Title2", "Title1")
+      `info repository`.query.await
+        .map(_.title) shouldBe List("Title5", "Title4", "Title3", "Title2", "Title1")
     }
 
     "retrieve post by title" in {
-      databaseActor ! FindByTitle("Title3")
-      val reply = expectMsgClass(classOf[Reply[Option[Post]]])
-      reply.result.getOrElse(
-        throw new RuntimeException("Inserted post was not found")
-      ).tags should not be empty
+      `posts repository`.query("Title3").await should not be empty
     }
 
     "find all post infos by tags in chronological order" in {
-      databaseActor ! FindByTags(List("scala", "akka"))
-      val reply = expectMsgClass(classOf[Reply[List[PostInfo]]])
-      reply.result.map(_.title) shouldBe List("Title5", "Title4", "Title3")
+      `info repository`.query(List("scala", "akka")).await
+        .map(_.title) shouldBe List("Title5", "Title4", "Title3")
     }
 
     "provide count of posts" in {
-      databaseActor ! Count()
-      val reply = expectMsgClass(classOf[Reply[Int]])
-      reply.result shouldBe 5
+      `posts repository`.count.await shouldBe 5
     }
 
   }
@@ -65,11 +56,6 @@ class DatabaseSpec extends TestKit(ActorSystem("DatabaseActorSpec")) with Implic
   implicit class Awaitable[T](future: Future[T]) {
 
     def await: T = Await.result(future, 10 seconds)
-  }
-
-  implicit class TryAssertion[T](reply : Reply[T]) {
-
-    def result: T = reply.data.getOrElse(throw new RuntimeException("Did not get expect value"))
   }
 
 }
