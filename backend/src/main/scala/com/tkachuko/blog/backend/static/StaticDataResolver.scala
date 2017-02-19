@@ -1,6 +1,7 @@
 package com.tkachuko.blog.backend.static
 
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
 
 object StaticDataResolver {
 
@@ -20,17 +21,17 @@ object StaticDataResolver {
 
   val frontend = "frontend-fastopt.js"
 
-  val frontendJs = frontend.plainResource
+  val frontendJs: Route = frontend.plainResource
 
-  val homePage = "index.html".webResource
+  val homePage: Route = "index.html".webResource
 
-  val blogPage = "blog.html".webResource
+  val blogPage: Route = "blog.html".webResource
 
   implicit class WebResource(val path: String) extends AnyVal {
 
-    def webResource = getFromResource(s"$resourcePrefix/$path")
+    def webResource: Route = getFromResource(s"$resourcePrefix/$path")
 
-    def plainResource = getFromResource(path)
+    def plainResource: Route = getFromResource(path)
   }
 
 }

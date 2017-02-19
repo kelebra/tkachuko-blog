@@ -3,7 +3,7 @@ import sbt._
 
 object Tasks {
 
-  val runLocally = {
+  val runLocally: Setting[InputTask[Unit]] = {
 
     lazy val runWeb = inputKey[Unit]("Runs web server locally")
 

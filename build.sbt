@@ -6,10 +6,7 @@ lazy val `tkachuko-blog` = (project in file("."))
   .aggregate(modelsJvm, `db-access`, backend, frontend)
 
 lazy val `db-access` = (project in file("db-access"))
-  .settings(dbAccessSettings: _*).dependsOn(modelsJvm, util, `db-client`)
-
-lazy val `db-client` = (project in file("db-client"))
-  .settings(modelsSettings: _*).dependsOn(modelsJvm)
+  .settings(dbAccessSettings: _*).dependsOn(modelsJvm)
 
 lazy val models = (crossProject.crossType(CrossType.Pure) in file("models"))
   .settings(modelsSettings: _*)
@@ -18,9 +15,6 @@ lazy val modelsJvm = models.jvm
 
 lazy val modelsJs = models.js
   .settings(assembly := new File(""))
-
-lazy val util = (project in file("util"))
-  .settings(utilSettings: _*)
 
 lazy val backend = (project in file("backend"))
   .settings(backendSettings: _*)

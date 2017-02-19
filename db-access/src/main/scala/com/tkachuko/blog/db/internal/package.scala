@@ -28,7 +28,7 @@ package object internal {
       def insert(post: Post): Future[WriteResult] = collection.flatMap(_.insert(post))
     }
 
-    class PostsDescription(collection: => Future[BSONCollection] = posts)
+    class PostsInfo(collection: => Future[BSONCollection] = posts)
       extends PostInfoRepository with BsonFormatSupport {
 
       def query(tags: Tags): Future[List[PostInfo]] = {
