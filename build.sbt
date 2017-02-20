@@ -1,5 +1,6 @@
 import Configuration._
 import DockerConfiguration._
+import GatlingConfiguration._
 
 lazy val `tkachuko-blog` = (project in file("."))
   .settings(rootSettings: _*)
@@ -25,6 +26,7 @@ lazy val backend = (project in file("backend"))
         .map((f1, f2) => Seq(f1.data, f2.data)),
     watchSources <++= (watchSources in frontend)
   )
+  .gatling
   .dockerWeb("0.0.0.0", 80)
 
 lazy val frontend = (project in file("frontend"))

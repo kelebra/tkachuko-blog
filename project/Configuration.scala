@@ -27,7 +27,7 @@ object Configuration {
   }
 
   lazy val backendSettings: Seq[Setting[_]] = commonSettings :+ {
-    libraryDependencies ++= Seq(http, httpTestkit, json)
+    libraryDependencies ++= Seq(http, httpTestkit, json, gatling, gatlingCharts)
   } :+ Tasks.runLocally
 
   lazy val rootSettings: Seq[Setting[_]] = commonSettings
@@ -56,4 +56,6 @@ object Dependencies {
   val json: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json" % `akka http version`
   val httpTestkit: ModuleID = "com.typesafe.akka" %% "akka-http-testkit" % `akka http version` % Test
   val akkaTestkit: ModuleID = "com.typesafe.akka" %% "akka-testkit" % `akka version` % Test
+  val gatlingCharts: ModuleID = "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.2" % Test
+  val gatling: ModuleID = "io.gatling" % "gatling-test-framework" % "2.2.2" % Test
 }
