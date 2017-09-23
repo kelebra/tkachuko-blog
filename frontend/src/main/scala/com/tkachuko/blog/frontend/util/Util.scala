@@ -41,16 +41,16 @@ object Util {
       val duration = System.currentTimeMillis() - millis.toLong
       val (unit, value) =
         Map(
-          "year(s)" -> duration / TimeUnit.DAYS.toMillis(365),
-          "month(s)" -> duration / TimeUnit.DAYS.toMillis(31),
-          "day(s)" -> duration / TimeUnit.DAYS.toMillis(1),
-          "hour(s)" -> duration / TimeUnit.HOURS.toMillis(1),
-          "minute(s)" -> duration / TimeUnit.MINUTES.toMillis(1),
-          "second(s)" -> duration / TimeUnit.SECONDS.toMillis(1)
+          "year" -> duration / TimeUnit.DAYS.toMillis(365),
+          "month" -> duration / TimeUnit.DAYS.toMillis(31),
+          "day" -> duration / TimeUnit.DAYS.toMillis(1),
+          "hour" -> duration / TimeUnit.HOURS.toMillis(1),
+          "minute" -> duration / TimeUnit.MINUTES.toMillis(1),
+          "second" -> duration / TimeUnit.SECONDS.toMillis(1)
         ).mapValues(math.abs)
           .filter { case (_, elapsed) => elapsed > 0 }
           .minBy { case (_, elapsed) => elapsed }
-      s"$value $unit"
+      s"$value ${if(value > 1) unit + "s" else unit}"
     }
   }
 

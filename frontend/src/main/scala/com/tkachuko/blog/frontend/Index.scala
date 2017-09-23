@@ -63,11 +63,6 @@ object Index extends js.JSApp {
               `class` := "item",
               i(`class` := "right aligned battery high icon"),
               div(`class` := "content", s"Scala (${1388556000000.0.readableDifference} experience)")
-            ),
-            div(
-              `class` := "item",
-              i(`class` := "right aligned battery medium icon"),
-              div(`class` := "content", s"Python (${1357020000000.0.readableDifference} experience)")
             )
           )
         )
@@ -107,9 +102,9 @@ object Index extends js.JSApp {
         div(`class` := "header", "Github projects:"),
         div(`class` := "description",
           div(`class` := "ui centered divided animated list",
-            repo("https://github.com/kelebra/chess-challenge"),
+            repo("https://github.com/kelebra/akka-js-snake"),
             repo("https://github.com/kelebra/programming-interview-java"),
-            repo("https://github.com/kelebra/security-identifier"),
+            repo("https://github.com/kelebra/uber-stream-app"),
             repo("https://github.com/kelebra/tkachuko-blog")
           )
         )
