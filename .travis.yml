@@ -4,18 +4,15 @@ jdk:
   - oraclejdk8
 
 scala:
-  - 2.11.8
+  - 2.12.2
 
-sudo: required
+env:
+  - TRAVIS_NODE_VERSION="7.6.0"
 
-services:
-  - docker
+install:
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
+  - npm install
+  - npm install jsdom
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION clean test docker
-
-after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push $DOCKER_USERNAME/tkachuko-blog-backend;
-    fi
+  - sbt ++$TRAVIS_SCALA_VERSION clean test
