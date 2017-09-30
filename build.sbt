@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   "org.akka-js" %%% "akkajsactor" % "1.2.5.4",
   "io.circe" %%% "circe-generic" % "0.8.0",
   "io.circe" %%% "circe-parser" % "0.8.0",
+  "org.scalaz" %%% "scalaz-core" % "7.2.15",
 
   "org.akka-js" %%% "akkajstestkit" % "1.2.5.4" % Test,
   "org.scalatest" %%% "scalatest" % "3.0.4" % Test

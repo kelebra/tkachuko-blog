@@ -13,7 +13,7 @@ class HttpAccessTest extends AsyncWordSpec with Matchers {
 
     "make native http call and return reply" in {
 
-      HttpAccess.native.send(Request("http", "ip.jsontest.com"))
+      HttpAccess.native.send(HttpRequest(host = "ip.jsontest.com"))
         .map(reply => reply should not be empty)
     }
   }
