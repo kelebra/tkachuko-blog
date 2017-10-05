@@ -6,8 +6,7 @@ package object model {
   type Timestamp = Double
   type Content = String
 
-  case class Tag(name: Title)
-
+  type Tag = String
   type Tags = Set[Tag]
 
   case class Post(title: Title,
@@ -20,5 +19,7 @@ package object model {
   sealed trait Info[T]
 
   case class PostInfo(title: Title, tags: Tags, created: Timestamp) extends Info[Post]
+
+  type Infos = Set[PostInfo]
 
 }
