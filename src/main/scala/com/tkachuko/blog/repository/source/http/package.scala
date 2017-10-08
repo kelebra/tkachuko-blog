@@ -1,6 +1,6 @@
 package com.tkachuko.blog.repository.source
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
 import akka.pattern.pipe
 import com.tkachuko.blog.repository.source.http.Protocol.Protocol
 import com.tkachuko.blog.util._
