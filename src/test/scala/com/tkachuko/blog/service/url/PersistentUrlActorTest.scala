@@ -6,7 +6,7 @@ import com.tkachuko.blog.common.ActorSpec
 class PersistentUrlActorTest extends ActorSpec(ActorSystem("persistent-url-system")) {
 
   private val initial = "url"
-  private val url = system.actorOf(PersistentUrlActor(initial))
+  private val url = system.actorOf(PersistentUrlActor(initial, self))
 
   "Persistent url actor" should {
 
@@ -28,9 +28,18 @@ class PersistentUrlActorTest extends ActorSpec(ActorSystem("persistent-url-syste
     }
 
     "change URL and blog as reply" in {
-      val tag = "scala"
-      url ! s"http://domain.com/blog#bla=$tag"
+      url ! s"http://domain.com/blog/"
       expectMsg(BlogEvent)
+    }
+
+    "change URL and index as reply" in {
+      url ! s"http://domain.com"
+      expectMsg(IndexEvent)
+    }
+
+    "change URL and index as reply in case of parsing error" in {
+      url ! "bullshit"
+      expectMsg(IndexEvent)
     }
   }
 }

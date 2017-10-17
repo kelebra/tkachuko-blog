@@ -10,8 +10,8 @@ class GithubActorTest extends ActorSpec(ActorSystem("github-actor")) {
 
     "provide list of github repositories" in {
       system.actorOf(Props(GithubActor)) ! Read
-      val links = expectMsgClass(classOf[List[String]])
-      links.find(_.contains("tkachuko-blog")) should not be empty
+      val links = expectMsgClass(classOf[List[Repository]])
+      links.find(_.url.contains("tkachuko-blog")) should not be empty
     }
   }
 }

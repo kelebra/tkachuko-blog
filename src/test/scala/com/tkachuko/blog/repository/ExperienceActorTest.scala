@@ -10,8 +10,8 @@ class ExperienceActorTest extends ActorSpec(ActorSystem("experience-actor")) {
 
     "provide experience per programming language" in {
       system.actorOf(Props(ExperienceActor)) ! Read
-      val mapping = expectMsgClass(classOf[Map[String, String]])
-      mapping should contain key "Scala(.js)"
+      val mapping = expectMsgClass(classOf[List[Experience]])
+      mapping.find(_.language == "Scala(.js)") should not be empty
     }
   }
 }

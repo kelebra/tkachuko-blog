@@ -23,29 +23,43 @@ trait StaticDataActor[T] extends Actor with ActorLogging {
   private def child = context.watch(context.actorOf(InMemorySource(payload)))
 }
 
-object ExperienceActor extends StaticDataActor[Map[String, String]] {
+case class Experience(language: String, duration: String)
 
-  def payload: Map[String, String] = ("Java", 1325397600000L.readableFromNow()) ::
-    ("Scala(.js)", 1388556000000L.readableFromNow()) :: Nil toMap
+object ExperienceActor extends StaticDataActor[List[Experience]] {
+
+  def payload: List[Experience] =
+    Experience("Java", 1325397600000L.readableFromNow()) ::
+      Experience("Scala(.js)", 1388556000000L.readableFromNow()) :: Nil
 }
 
-object GithubActor extends StaticDataActor[List[String]] {
+case class Repository(url: String)
 
-  def payload: List[String] = List(
-    "https://github.com/kelebra/akka-js-snake",
-    "https://github.com/kelebra/programming-interview-java",
-    "https://github.com/kelebra/uber-stream-app",
-    "https://github.com/kelebra/tkachuko-blog"
+object GithubActor extends StaticDataActor[List[Repository]] {
+
+  def payload: List[Repository] = List(
+    Repository("https://github.com/kelebra/akka-js-snake"),
+    Repository("https://github.com/kelebra/programming-interview-java"),
+    Repository("https://github.com/kelebra/uber-stream-app"),
+    Repository("https://github.com/kelebra/tkachuko-blog")
   )
 }
 
-case class ContactInfo(email: String, photo: String, location: String)
+case class ContactInfo(name: String, position: String, email: String, photo: String, location: String)
 
 object ContactInfoActor extends StaticDataActor[ContactInfo] {
 
   def payload: ContactInfo = ContactInfo(
+    name = "Oleksii Tkachuk",
+    position = "Software Engineer",
     email = "kelebra20@gmail.com",
-    photo = "https://www.facebook.com/photo.php?fbid=1883058935241431&l=d4bae315bd",
+    photo = "https://content-na.drive.amazonaws.com/cdproxy/templink/joZ7Hti3ZVLVXIamJ15muCpKrba0d1kzBM07pYlor8QeJxFPc?viewBox=2560%2C1702",
     location = "Nashville, TN"
   )
+}
+
+case class Quote(content: String, author: String)
+
+object QuoteActor extends StaticDataActor[Quote] {
+
+  def payload: Quote = Quote("Simplicity is prerequisite for reliability", "Edsger W. Dijkstra")
 }

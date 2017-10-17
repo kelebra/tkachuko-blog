@@ -28,11 +28,11 @@ libraryDependencies ++= Seq(
   "org.scalatest" %%% "scalatest" % "3.0.4" % Test
 )
 
-scalaJSUseMainModuleInitializer := true
-
 jsEnv := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv()
 
 scalaJSStage := FastOptStage
+
+mainClass := Some("com.tkachuko.blog.App")
 
 val githubPages = taskKey[Unit]("Copy index.html and js files to match github pages layout")
 
