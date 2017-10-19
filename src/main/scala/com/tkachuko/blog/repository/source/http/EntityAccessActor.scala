@@ -1,15 +1,14 @@
 package com.tkachuko.blog.repository.source.http
 
 import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill, Props, Terminated}
-import com.tkachuko.blog.model.{Infos, Post, PostInfo, Posts}
-import com.tkachuko.blog.repository.source.http.EntityAccessActor.Query
-import com.tkachuko.blog.repository.source.http.EntityAccessActor.request
+import com.tkachuko.blog.model._
+import com.tkachuko.blog.repository.source.http.EntityAccessActor.{Query, request}
 
 abstract class EntityAccessActor(val proto: Option[HttpAccess], collection: String)
   extends Actor with ActorLogging {
 
   def forwardTo(http: ActorRef): Receive = {
-    case query: Query        =>
+    case query: Query    =>
       http forward request(collection, query)
     case Terminated(ref) =>
       context.unwatch(ref) ! PoisonPill
@@ -37,7 +36,7 @@ object EntityAccessActor {
   def request(collection: String, query: Query): HttpRequest = {
     val queryParameter = query.filter.map(v => s"?q=$v").getOrElse("")
     val fieldsParameter = query.fields.map(v => s"f=$v").getOrElse("")
-    val divider = if(query.fields.isEmpty) "" else "?"
+    val divider = if (query.fields.isEmpty) "" else "?"
 
     HttpRequest(
       protocol = Protocol.https,

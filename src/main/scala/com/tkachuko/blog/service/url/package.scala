@@ -1,7 +1,7 @@
 package com.tkachuko.blog.service
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import com.tkachuko.blog.model.{Tag, Title}
+import akka.actor.{Actor, ActorLogging, Props}
+import com.tkachuko.blog.view.{Blog, Index, Post}
 import org.scalajs.dom._
 
 import scala.util.Try
@@ -10,19 +10,7 @@ package object url {
 
   type URL = String
 
-  sealed trait PathEvent
-
-  case class PostEvent(title: Title) extends PathEvent
-
-  case class TagEvent(tag: Tag) extends PathEvent
-
-  case object BlogEvent extends PathEvent
-
-  case object IndexEvent extends PathEvent
-
-  class PersistentUrlActor(initial: URL,
-                           subscriber: ActorRef,
-                           affectJs: Boolean) extends Actor with ActorLogging {
+  class PersistentUrlActor(initial: URL, affectJs: Boolean) extends Actor with ActorLogging {
 
     override def preStart(): Unit =
       window.addEventListener("popstate", (_: PopStateEvent) => self ! window.location.href)
@@ -31,17 +19,17 @@ package object url {
 
     private def urlState(current: URL = initial): Receive = {
       case url: URL if change(current, url) =>
-        log.info("Moving from {} to {}", current, url)
-        subscriber ! event(url)
+        val props = viewProps(url)
+        log.info("Rendering  {}", props)
         context.become(urlState(url))
     }
 
-    private def event(current: URL): PathEvent =
+    private def viewProps(current: URL): Props =
       current match {
-        case hasPost: URL if hasPost has post => PostEvent(hasPost.split(post).last)
-        case hasTag: URL if hasTag has tag    => TagEvent(hasTag.split(tag).last)
-        case hasBlog: URL if hasBlog has blog => BlogEvent
-        case _                                => IndexEvent
+        case hasPost: URL if hasPost has post => Post(hasPost.split(post).last)
+        case hasTag: URL if hasTag has tag    => ???
+        case hasBlog: URL if hasBlog has blog => Blog()
+        case _                                => Props(Index)
       }
 
     private def change(current: URL, next: URL): Boolean = {
@@ -53,11 +41,9 @@ package object url {
 
   object PersistentUrlActor {
 
-    def apply(subscriber: ActorRef): Props =
-      Props(classOf[PersistentUrlActor], window.location.href, subscriber, true)
+    def apply(): Props = Props(classOf[PersistentUrlActor], window.location.href, true)
 
-    def apply(initial: URL, subscriber: ActorRef): Props =
-      Props(classOf[PersistentUrlActor], initial, subscriber, false)
+    def apply(initial: URL): Props = Props(classOf[PersistentUrlActor], initial, false)
   }
 
   private val js = "#"

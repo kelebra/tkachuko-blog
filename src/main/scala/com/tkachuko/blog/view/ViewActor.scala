@@ -16,7 +16,7 @@ trait ViewActor extends Actor with ActorLogging {
 
   type DivView = Future[JsDom.TypedTag[Div]]
 
-  implicit val timeout: Timeout = 1 second
+  implicit val timeout: Timeout = 5 seconds
 
   import context.dispatcher
 

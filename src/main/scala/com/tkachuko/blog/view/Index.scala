@@ -5,7 +5,6 @@ import akka.pattern.ask
 import com.tkachuko.blog.repository._
 import com.tkachuko.blog.repository.source.memory.Read
 
-import scala.scalajs.js.annotation.JSExport
 import scalatags.JsDom.all._
 
 object Index extends ViewActor {
