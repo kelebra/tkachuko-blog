@@ -52,7 +52,7 @@ object ContactInfoActor extends StaticDataActor[ContactInfo] {
     name = "Oleksii Tkachuk",
     position = "Software Engineer",
     email = "kelebra20@gmail.com",
-    photo = "https://content-na.drive.amazonaws.com/cdproxy/templink/joZ7Hti3ZVLVXIamJ15muCpKrba0d1kzBM07pYlor8QeJxFPc?viewBox=2560%2C1702",
+    photo = "https://media-exp2.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAtaAAAAJDZjYzBjN2ViLTI4ZDQtNDQzNi1iMjU1LWJlYzhiZjcxMmZiNA.jpg",
     location = "Nashville, TN"
   )
 }

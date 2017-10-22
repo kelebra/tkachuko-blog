@@ -1,19 +1,17 @@
 package com.tkachuko.blog.repository.source
 
-import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.pipe
+import com.tkachuko.blog.repository.source.http.JsonSupport.Unmarshal
 import com.tkachuko.blog.repository.source.http.Protocol.Protocol
 import com.tkachuko.blog.util._
 
-import scala.concurrent.Future
 import scalaz.\/
 
 package object http {
 
   type Host = String
   type Path = String
-
-  type Unmarshal[T] = String => Future[T]
 
   object Protocol extends Enumeration {
     type Protocol = Value
@@ -42,8 +40,8 @@ package object http {
       case request: HttpRequest =>
         pipe(
           httpAccess.send(request)
-            .flatMap(unmarshal)
-            .andThen { case reply => log.info("{} => {}", request, reply) }
+            .map(unmarshal)
+            .andThen { case reply => log.info("HTTP reply of type {}", reply.getClass.getSimpleName) }
             .<\/>
         ) to sender()
     }
@@ -51,13 +49,8 @@ package object http {
 
   object HttpAccessActor {
 
-    import io.circe._
-    import io.circe.parser._
-
-    def apply[T](httpAccess: HttpAccess)(implicit decoder: Decoder[T]): Props = {
-      val jsonDispatcher = (json: String) => decode[T](json).fold(Future.failed, Future.successful)
-      Props(classOf[HttpAccessActor[T]], httpAccess, jsonDispatcher)
-    }
+    def apply[T](httpAccess: HttpAccess)(implicit unmarshal: Unmarshal[T]): Props =
+      Props(classOf[HttpAccessActor[T]], httpAccess, unmarshal)
   }
 
 }

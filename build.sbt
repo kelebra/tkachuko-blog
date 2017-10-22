@@ -19,11 +19,7 @@ libraryDependencies ++= Seq(
   "com.lihaoyi" %%% "scalatags" % "0.6.7",
   "org.akka-js" %%% "akkajsactor" % "1.2.5.4",
   "org.scalaz" %%% "scalaz-core" % "7.2.15",
-
-  "io.circe" %%% "circe-generic" % "0.8.0",
-  "io.circe" %%% "circe-core" % "0.8.0",
-  "io.circe" %%% "circe-parser" % "0.8.0",
-
+  "com.typesafe.play" %%% "play-json" % "2.6.6",
   "org.akka-js" %%% "akkajstestkit" % "1.2.5.4" % Test,
   "org.scalatest" %%% "scalatest" % "3.0.4" % Test
 )

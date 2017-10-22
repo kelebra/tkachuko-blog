@@ -7,7 +7,7 @@ import scalaz.{-\/, \/, \/-}
 
 package object util {
 
-  implicit class FutureWithEither[T](future: Future[T]) {
+  implicit class FutureInterOps[T](future: Future[T]) {
 
     def <\/>(implicit ec: ExecutionContext): Future[\/[Throwable, T]] =
       future

@@ -20,7 +20,7 @@ class RequestCompositionTest extends WordSpec with Matchers {
       val collection = "some-collection"
 
       val httpRequest = EntityAccessActor.request(collection, ReadPostInfos)
-      httpRequest.path should endWith(s"""$collection?f={"content":0}""")
+      httpRequest.path should endWith(s"""$collection?f={"_id":0,"content":0}""")
     }
   }
 }

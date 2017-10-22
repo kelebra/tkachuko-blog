@@ -4,7 +4,7 @@ import akka.actor.Props
 import akka.pattern.ask
 import com.tkachuko.blog.model.{Infos, PostInfo, Tag}
 import com.tkachuko.blog.repository.source.http.EntityAccessActor.Query
-import com.tkachuko.blog.repository.source.http.PostAccessActor
+import com.tkachuko.blog.repository.source.http.PostInfoActor
 import com.tkachuko.blog.repository.source.http.PostInfoActor.ReadPostInfos
 import com.tkachuko.blog.util.ReadableMillisDifference
 
@@ -16,7 +16,7 @@ class Blog(query: Query) extends ViewActor {
   import context.dispatcher
 
   def view: DivView = for {
-    infoLoad <- (context.actorOf(Props(PostAccessActor)) ? ReadPostInfos).mapTo[\/[Throwable, Infos]]
+    infoLoad <- (context.actorOf(Props(PostInfoActor)) ? ReadPostInfos).mapTo[\/[Throwable, Infos]]
   } yield infoLoad match {
     case \/-(infos) => div(sideBar(infos.flatMap(_.tags).toSeq: _*), blogContent(infos.toSeq: _*))
     case -\/(error) => throw error

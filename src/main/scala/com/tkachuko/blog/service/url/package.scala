@@ -1,7 +1,8 @@
 package com.tkachuko.blog.service
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.tkachuko.blog.view.{Blog, Index, Post}
+import com.tkachuko.blog.model.{Tag, Title}
+import com.tkachuko.blog.view.{Blog, Index, Post, Render}
 import org.scalajs.dom._
 
 import scala.util.Try
@@ -10,49 +11,42 @@ package object url {
 
   type URL = String
 
-  class PersistentUrlActor(initial: URL, affectJs: Boolean) extends Actor with ActorLogging {
+  object UrlActor extends Actor with ActorLogging {
 
     override def preStart(): Unit =
-      window.addEventListener("popstate", (_: PopStateEvent) => self ! window.location.href)
+      window.addEventListener("popstate", (_: PopStateEvent) => self ! window.location.hash)
 
-    def receive: Receive = urlState()
+    def receive: Receive = renderAddressBar andThen viewProps andThen render
 
-    private def urlState(current: URL = initial): Receive = {
-      case url: URL if change(current, url) =>
-        val props = viewProps(url)
-        log.info("Rendering  {}", props)
-        context.become(urlState(url))
+    private val render: PartialFunction[Props, Unit] = {
+      case props: Props =>
+        log.info("Rendering {}", props.clazz.getSimpleName)
+        context.actorOf(props) ! Render
     }
 
-    private def viewProps(current: URL): Props =
-      current match {
-        case hasPost: URL if hasPost has post => Post(hasPost.split(post).last)
-        case hasTag: URL if hasTag has tag    => ???
-        case hasBlog: URL if hasBlog has blog => Blog()
-        case _                                => Props(Index)
-      }
-
-    private def change(current: URL, next: URL): Boolean = {
-      val changed = current != next
-      if (changed && affectJs) window.location.href = next
-      changed
+    private val viewProps: PartialFunction[Any, Props] = {
+      case ""                                 => Props(Index)
+      case hasPost: URL if hasPost has post() => Post(hasPost.split(post()).last)
+      case hasTag: URL if hasTag has tag()    => ???
+      case hasBlog: URL if hasBlog has blog   => Blog()
+      case _                                  => Props(Index)
     }
-  }
 
-  object PersistentUrlActor {
-
-    def apply(): Props = Props(classOf[PersistentUrlActor], window.location.href, true)
-
-    def apply(initial: URL): Props = Props(classOf[PersistentUrlActor], initial, false)
+    private val renderAddressBar: PartialFunction[Any, Any] = {
+      case change if change != window.location.hash => window.location.hash = change.toString; change
+      case other                                    => other
+    }
   }
 
   private val js = "#"
 
-  private val post = s"${js}post="
+  private val blog = s"$js/blog"
 
-  private val tag = s"${js}tag="
+  def post(title: Title = "") = s"$blog/post/$title"
 
-  private val blog = "/blog/"
+  def tag(t: Tag = "") = s"$blog/tag/$t"
+
+  def gotoBlog: MouseEvent => Unit = _ => window.location.hash = blog
 
   private implicit class SafeUrlOrations(url: URL) {
 

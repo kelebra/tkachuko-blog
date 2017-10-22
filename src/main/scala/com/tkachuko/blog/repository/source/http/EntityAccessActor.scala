@@ -1,13 +1,19 @@
 package com.tkachuko.blog.repository.source.http
 
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill, Props, Terminated}
+import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill, Terminated}
 import com.tkachuko.blog.model._
 import com.tkachuko.blog.repository.source.http.EntityAccessActor.{Query, request}
+import com.tkachuko.blog.repository.source.http.JsonSupport.Unmarshal
 
-abstract class EntityAccessActor(val proto: Option[HttpAccess], collection: String)
-  extends Actor with ActorLogging {
+abstract class EntityAccessActor[T](collection: String, access: () => HttpAccess)
+                                   (implicit val unmarshal: Unmarshal[T]) extends Actor with ActorLogging {
 
-  def forwardTo(http: ActorRef): Receive = {
+  import context.dispatcher
+
+  protected def child: ActorRef =
+    context.watch(context.actorOf(HttpAccessActor[T](access())))
+
+  private def forwardTo(http: ActorRef): Receive = {
     case query: Query    =>
       http forward request(collection, query)
     case Terminated(ref) =>
@@ -16,12 +22,6 @@ abstract class EntityAccessActor(val proto: Option[HttpAccess], collection: Stri
   }
 
   def receive: Receive = forwardTo(child)
-
-  protected def child: ActorRef
-
-  import context.dispatcher
-
-  protected def resolveAccess: HttpAccess = proto.getOrElse(HttpAccess.native)
 }
 
 object EntityAccessActor {
@@ -41,25 +41,16 @@ object EntityAccessActor {
     HttpRequest(
       protocol = Protocol.https,
       host = "api.mlab.com",
-      path = s"/api/1/databases/blog/collections/$collection$queryParameter$divider$fieldsParameter",
+      path = s"api/1/databases/blog/collections/$collection$queryParameter$divider$fieldsParameter",
       token = Option(MLabToken)
     )
   }
 
 }
 
-object PostAccessActor extends EntityAccessActor(None, "posts") {
+import com.tkachuko.blog.repository.source.http.JsonSupport.postUnmarshal
 
-  def child: ActorRef = {
-
-    import io.circe.Decoder
-    import io.circe.generic.semiauto._
-    implicit val decoder: Decoder[Post] = deriveDecoder[Post]
-
-    context.watch(context.actorOf(HttpAccessActor[Posts](resolveAccess)))
-  }
-
-  def apply = Props(this.getClass)
+object PostAccessActor extends EntityAccessActor[Posts]("posts", () => Native) {
 
   case class ReadPost(title: String) extends Query {
 
@@ -68,22 +59,13 @@ object PostAccessActor extends EntityAccessActor(None, "posts") {
 
 }
 
-object PostInfoActor extends EntityAccessActor(None, "posts") {
+import com.tkachuko.blog.repository.source.http.JsonSupport.infoUnmarshal
 
-  def child: ActorRef = {
-
-    import io.circe.Decoder
-    import io.circe.generic.semiauto._
-    implicit val decoder: Decoder[PostInfo] = deriveDecoder[PostInfo]
-
-    context.watch(context.actorOf(HttpAccessActor[Infos](resolveAccess)))
-  }
-
-  def apply = Props(this.getClass)
+object PostInfoActor extends EntityAccessActor[Infos]("posts", () => Native) {
 
   case object ReadPostInfos extends Query {
 
-    override val fields: Option[String] = Option(s"""{"content":0}""")
+    override val fields: Option[String] = Option(s"""{"_id":0,"content":0}""")
   }
 
 }

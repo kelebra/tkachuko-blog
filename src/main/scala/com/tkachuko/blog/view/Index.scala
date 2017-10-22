@@ -4,6 +4,7 @@ import akka.actor.Props
 import akka.pattern.ask
 import com.tkachuko.blog.repository._
 import com.tkachuko.blog.repository.source.memory.Read
+import com.tkachuko.blog.service.url.gotoBlog
 
 import scalatags.JsDom.all._
 
@@ -30,8 +31,8 @@ object Index extends ViewActor {
         h2(quote.author),
         a(
           `class` := "ui huge primary button",
-          href := "/blog",
           "Welcome to my blog",
+          onclick := gotoBlog,
           i(`class` := "right arrow icon")
         )
       )
