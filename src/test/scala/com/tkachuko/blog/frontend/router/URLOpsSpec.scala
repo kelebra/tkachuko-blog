@@ -8,7 +8,7 @@ object URLOpsSpec extends TestSuite {
   val tests = Tests {
 
     "contain post reference" - {
-      val url = "http://domain:port/resource#post=hello%20world"
+      val url = "http://domain:port/resource#/blog/post=hello%20world"
       url.containsPost ==> true
     }
 
@@ -18,8 +18,18 @@ object URLOpsSpec extends TestSuite {
     }
 
     "be used to extract post title" - {
-      val url = "http://domain:port/resource#post=hello%20world"
+      val url = "http://domain:port/resource#/blog/post=hello%20world"
       url.title ==> Option("hello%20world")
+    }
+
+    "be used to extract tag" - {
+      val url = "http://domain:port/resource#/blog/tag=scala"
+      url.tag ==> Option("scala")
+    }
+
+    "contain tag query" - {
+      val url = "http://domain:port/resource#/blog/tag=scala"
+      url.containsTag ==> true
     }
   }
 }
