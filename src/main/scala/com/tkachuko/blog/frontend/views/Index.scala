@@ -100,7 +100,7 @@ object Index {
         `class` := "content",
         div(`class` := "header", "Github projects:"),
         div(`class` := "description",
-          div(`class` := "ui centered divided animated list",
+          div(`class` := "ui centered divided list",
             repo("https://github.com/kelebra/akka-js-snake"),
             repo("https://github.com/kelebra/programming-interview-java"),
             repo("https://github.com/kelebra/uber-stream-app"),
