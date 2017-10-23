@@ -1,7 +1,7 @@
 import java.io.PrintWriter
-import java.nio.file.{Files, StandardCopyOption}
+import java.nio.file.{Files, Paths, StandardCopyOption}
 
-import scala.io.Source
+import scala.collection.JavaConverters._
 
 enablePlugins(ScalaJSPlugin)
 
@@ -35,16 +35,22 @@ githubPages := {
   val jsTarget = new File(".", js.getName)
   Files.copy(js.toPath, jsTarget.toPath, StandardCopyOption.REPLACE_EXISTING)
 
-  // 2) Read current index.html
-  val indexContent = Source.fromFile("./src/main/resources/index.html")
-    .mkString
-    .replace("fastopt", "opt")
-    .replace("target/scala-2.12/", "")
+  // 2) Copy everything from resources
+  new File("./src/main/resources/")
+    .listFiles()
+    .foreach(file =>
+      Files.copy(file.toPath, new File(".", file.getName).toPath, StandardCopyOption.REPLACE_EXISTING)
+    )
 
-  // 3) Create prod index.html
+  // 3) Replace links in index.html
   val index = new File(".", "index.html")
-  if (index.exists()) index.delete()
+  val content =
+    Files.readAllLines(index.toPath).asScala
+      .toList
+      .mkString("\n")
+      .replaceAll("fastopt", "opt")
+      .replaceAll("target/scala-2.12/", "")
   val writer = new PrintWriter(index)
-  writer.write(indexContent)
+  writer.write(content)
   writer.close()
 }
