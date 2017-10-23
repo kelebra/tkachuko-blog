@@ -1,47 +1,50 @@
-import Configuration._
-import DockerConfiguration._
-import GatlingConfiguration._
+import java.io.PrintWriter
+import java.nio.file.{Files, StandardCopyOption}
 
-lazy val `tkachuko-blog` = (project in file("."))
-  .settings(rootSettings: _*)
-  .aggregate(modelsJvm, `db-access`, backend, frontend)
+import scala.io.Source
 
-lazy val `db-access` = (project in file("db-access"))
-  .settings(dbAccessSettings: _*).dependsOn(modelsJvm)
+enablePlugins(ScalaJSPlugin)
 
-lazy val models = (crossProject.crossType(CrossType.Pure) in file("models"))
-  .settings(modelsSettings: _*)
+name := "tkachuko-blog"
 
-lazy val modelsJvm = models.jvm
+scalaVersion := "2.12.2"
 
-lazy val modelsJs = models.js
-  .settings(assembly := new File(""))
+scalaBinaryVersion := "2.12"
 
-lazy val backend = (project in file("backend"))
-  .settings(backendSettings: _*)
-  .dependsOn(`db-access`, modelsJvm)
-  .settings(
-    (resourceGenerators in Compile) <+=
-      (fastOptJS in Compile in frontend, packageScalaJSLauncher in Compile in frontend)
-        .map((f1, f2) => Seq(f1.data, f2.data)),
-    watchSources <++= (watchSources in frontend)
-  )
-  .gatling
-  .dockerWeb("0.0.0.0", 80)
+sbtVersion := "0.13.16"
 
-lazy val frontend = (project in file("frontend"))
-  .dependsOn(modelsJs)
-  .settings(
-    commonSettings
-      ++ Seq(
-      libraryDependencies ++= Seq(
-        "org.scala-js" %%% "scalajs-dom" % "0.8.0",
-        "com.lihaoyi" %%% "scalatags" % "0.4.5",
-        "com.lihaoyi" %%% "upickle" % "0.4.1",
-        "com.lihaoyi" %%% "utest" % "0.4.0" % "test"
-      ),
-      testFrameworks += new TestFramework("utest.runner.Framework"),
-      scalaJSStage := FastOptStage
-    ): _*)
-  .disablePlugins(sbtassembly.AssemblyPlugin)
-  .enablePlugins(ScalaJSPlugin)
+libraryDependencies ++= Seq(
+  "org.scala-js" %%% "scalajs-dom" % "0.9.2",
+  "com.lihaoyi" %%% "scalatags" % "0.6.7",
+  "com.typesafe.play" %%% "play-json" % "2.6.6",
+  "com.lihaoyi" %%% "utest" % "0.6.0" % Test,
+  "org.scalatest" %%% "scalatest" % "3.0.4" % Test
+)
+
+testFrameworks += new TestFramework("utest.runner.Framework")
+
+scalaJSStage := FastOptStage
+
+mainClass := Some("com.tkachuko.blog.frontend.App")
+
+val githubPages = taskKey[Unit]("Copy index.html and js files to match github pages layout")
+
+githubPages := {
+  // 1) Copy compiled prod js
+  val js = (fullOptJS in Compile).value.data
+  val jsTarget = new File(".", js.getName)
+  Files.copy(js.toPath, jsTarget.toPath, StandardCopyOption.REPLACE_EXISTING)
+
+  // 2) Read current index.html
+  val indexContent = Source.fromFile("./src/main/resources/index.html")
+    .mkString
+    .replace("fastopt", "opt")
+    .replace("target/scala-2.12/", "")
+
+  // 3) Create prod index.html
+  val index = new File(".", "index.html")
+  if (index.exists()) index.delete()
+  val writer = new PrintWriter(index)
+  writer.write(indexContent)
+  writer.close()
+}
