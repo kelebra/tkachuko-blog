@@ -14,7 +14,7 @@ object Index {
 
   def header =
     div(
-      `class` := "ui inverted vertical masthead center aligned segment",
+      `class` := "ui inverted vertical masthead center aligned segment quote",
       div(
         `class` := "ui text container",
         h1(`class` := "ui inverted header", "Simplicity is prerequisite for reliability"),
