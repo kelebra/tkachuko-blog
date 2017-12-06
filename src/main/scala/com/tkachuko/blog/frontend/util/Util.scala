@@ -4,21 +4,10 @@ import java.util.concurrent.TimeUnit
 
 import com.tkachuko.blog.models.{Post, PostInfo}
 import org.scalajs.dom.{Element, MouseEvent, Node, document}
-import play.api.libs.json.{Json, Reads}
 
 import scala.scalajs.js
 
 object Util {
-
-  implicit class JsonConversions(json: String) {
-
-    private implicit val postsFormat: Reads[Post] = Json.reads[Post]
-    private implicit val infosFormat: Reads[PostInfo] = Json.reads[PostInfo]
-
-    def posts: List[Post] = Json.fromJson[List[Post]](Json.parse(json)).get
-
-    def postsInfo: List[PostInfo] = Json.fromJson[List[PostInfo]](Json.parse(json)).get
-  }
 
   implicit class PostTagsExtractor(posts: List[Post]) {
 
