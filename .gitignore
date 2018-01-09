@@ -12,3 +12,4 @@ project/boot/
 .idea_modules/
 project/target
 */target
+node_modules/
