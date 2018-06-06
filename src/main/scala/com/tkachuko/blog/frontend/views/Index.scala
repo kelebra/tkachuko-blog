@@ -73,7 +73,7 @@ object Index {
       `class` := "card",
       div(
         `class` := "image",
-        img(src := "https://media-exp2.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAtaAAAAJDZjYzBjN2ViLTI4ZDQtNDQzNi1iMjU1LWJlYzhiZjcxMmZiNA.jpg")
+        img(src := "https://image.ibb.co/bXA7tT/Untitled.png")
       ),
       div(
         `class` := "content",

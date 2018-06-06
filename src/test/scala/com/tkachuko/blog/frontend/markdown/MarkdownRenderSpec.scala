@@ -204,16 +204,22 @@ object MarkdownRenderSpec extends TestSuite {
 
     "render list in markdown content" - {
       val markdown =
-        "\n\n" +
-          "* _furthermostSoFar_ - number of steps it is possible to make to our current best knowledge\n" +
-          "* _board_ - array(list) of values which indicate how many steps allowed at step (index) _i_" +
-          "\n\n"
+        """
+          |
+          |* _furthermostSoFar_ - number of steps it is possible to make to our current best knowledge
+          |* _board_ - array(list) of values which indicate how many steps allowed at step (index) _i_
+          |
+        """.stripMargin
 
-      markdown.md ==>
-        "\n<ul>\n" +
-          "<li><i>furthermostSoFar</i> - number of steps it is possible to make to our current best knowledge</li>\n" +
-          "<li><i>board</i> - array(list) of values which indicate how many steps allowed at step (index) <i>i</i></li>\n" +
-          "</ul>\n"
+      val expected =
+        s"""
+           |<ul>
+           |<li><i>furthermostSoFar</i> - number of steps it is possible to make to our current best knowledge</li>
+           |<li><i>board</i> - array(list) of values which indicate how many steps allowed at step (index) <i>i</i></li>
+           |</ul>
+           |        """.stripMargin
+      val rendered = markdown.md
+      rendered ==> expected
     }
 
     "render simple list content" - {

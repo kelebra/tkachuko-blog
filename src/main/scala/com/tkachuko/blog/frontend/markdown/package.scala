@@ -5,6 +5,8 @@ import scala.language.postfixOps
 
 package object markdown {
 
+  private val new_line = System.lineSeparator()
+
   object Abstractions {
 
     import Util._
@@ -60,7 +62,7 @@ package object markdown {
     case class H(i: Int) extends Block {
       def open = Tag(s"${(1 to i).map(_ => "#").mkString} ", s"<h$i>")
 
-      def close = Tag("\n", s"</h$i>\n")
+      def close = Tag(s"$new_line", s"</h$i>$new_line")
     }
 
     case class Language(name: String) extends Block {
@@ -132,9 +134,9 @@ package object markdown {
 
     case object OrderedList extends Block {
 
-      def open = Tag("\n\n", "\n<ul>\n")
+      def open = Tag(s"$new_line$new_line", s"$new_line<ul>$new_line")
 
-      def close = Tag("\n\n", "\n</ul>\n")
+      def close = Tag(s"$new_line$new_line", s"$new_line</ul>$new_line")
 
       override def nested = true
 
@@ -143,12 +145,12 @@ package object markdown {
       val liSuffix = "</li>"
 
       override def render(value: String): String = {
-        val lines = value.split("\n")
+        val lines = value.split(s"$new_line")
         super.render(
           lines.map {
             case li if li.startsWith(liEncoded) => liDecoded + li.substring(liEncoded.length) + liSuffix
             case other => other
-          }.mkString("\n")
+          }.mkString(s"$new_line")
         )
       }
     }
