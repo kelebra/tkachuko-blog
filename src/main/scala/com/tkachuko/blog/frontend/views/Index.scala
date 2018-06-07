@@ -78,13 +78,9 @@ object Index {
       div(
         `class` := "content",
         div(`class` := "header", "Oleksii Tkachuk"),
-        div(`class` := "meta", a("Software Developer"))
+        div(`class` := "meta", a("Software Engineer"))
       ),
-      div(
-        `class` := "extra content",
-        a(href := "mailto:kelebra20@gmail.com", `class` := "left floated", i(`class` := "mail icon"), "kelebra20@gmail.com"),
-        span(`class` := "right floated", i(`class` := "marker icon"), "Nashville, TN")
-      )
+      div(`class` := "extra content", i(`class` := "check icon"), a(href := "https://www.dropbox.com/s/u6708doh9qr0fc1/Oleksii%20Tkachuk-CV.pdf?dl=0", "Download CV"))
     )
 
   def github = {

@@ -1,5 +1,5 @@
 import java.io.PrintWriter
-import java.nio.file.{Files, Paths, StandardCopyOption}
+import java.nio.file.{Files, StandardCopyOption}
 
 import scala.collection.JavaConverters._
 
