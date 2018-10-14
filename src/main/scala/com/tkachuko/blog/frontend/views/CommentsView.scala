@@ -14,24 +14,43 @@ class CommentsView(url: String, title: String, identifier: Int) {
 
   private def commentsContainer = div(id := "disqus_thread", `class` := "item").render
 
-  private def loader = script(
+  private def loader = html(
     raw(
-      s"""
-         |    var disqus_config = function () {
-         |        this.page.url = '$url';
-         |        this.page.identifier = '$identifier';
-         |        this.page.title = '$title';
-         |    };
-         |
-         |    (function() {
-         |        var d = document, s = d.createElement('script');
-         |
-         |        s.src = '//tkachuko-info.disqus.com/embed.js';
-         |
-         |        s.setAttribute('data-timestamp', +new Date());
-         |        (d.head || d.body).appendChild(s);
-         |    })();
-    """.stripMargin
+      """
+        |<!-- Remarkbox - Your readers want to communicate with you -->
+        |<div id="remarkbox-div">
+        |  <noscript>
+        |    <iframe id=remarkbox-iframe src="https://my.remarkbox.com/embed?nojs=true" style="height:600px;width:100%;border:none!important" tabindex=0></iframe>
+        |  </noscript>
+        |</div>
+        |<script src="https://my.remarkbox.com/static/js/iframe-resizer/iframeResizer.min.js"></script>
+        |<script>
+        |  var rb_owner_key = "a0e80a2a-cf60-11e8-8ee2-040140774501";
+        |  var thread_uri = window.location.href;
+        |  var thread_fragment = window.location.hash;
+        |  function create_remarkbox_iframe() {
+        |    var src = "https://my.remarkbox.com/embed?rb_owner_key=" + rb_owner_key + "&thread_uri=" + thread_uri;
+        |    var ifrm = document.createElement("iframe");
+        |    ifrm.setAttribute("id", "remarkbox-iframe");
+        |    ifrm.setAttribute("scrolling", "no");
+        |    ifrm.setAttribute("src", src);
+        |    ifrm.setAttribute("frameborder", "0");
+        |    ifrm.setAttribute("tabindex", "0");
+        |    ifrm.setAttribute("title", "Remarkbox");
+        |    ifrm.style.width = "100%";
+        |    document.getElementById("remarkbox-div").appendChild(ifrm);
+        |  }
+        |  create_remarkbox_iframe();
+        |  iFrameResize(
+        |    {
+        |      checkOrigin: ["https://my.remarkbox.com"],
+        |      inPageLinks: true,
+        |      initCallback: function(e) {e.iFrameResizer.moveToAnchor(thread_fragment)}
+        |    },
+        |    document.getElementById("remarkbox-iframe")
+        |  );
+        |</script>
+      """.stripMargin
     )
   ).render
 }
