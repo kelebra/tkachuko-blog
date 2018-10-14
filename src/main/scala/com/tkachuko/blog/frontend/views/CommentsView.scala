@@ -16,6 +16,7 @@ class CommentsView {
 
   private def commentsContainer: Div = div(
     id := "remarkbox-div",
+    `class` := "item",
     noscript(
       iframe(
         id := "remarkbox-iframe",
