@@ -32,7 +32,7 @@ class PostView(post: Post, comments: Boolean) {
     post.tags.map(TagView.apply).foreach(_.renderInColor(tagsElementId.byId))
     replaceElementContent(title.byId, post.content.md, br.render)
 
-    if (comments) CommentsView(title).render(container)
+    if (comments) CommentsView().render(container)
   }
 }
 
