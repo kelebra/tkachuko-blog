@@ -16,7 +16,6 @@ class CommentsView {
 
   private def commentsContainer: Div = div(
     id := "remarkbox-div",
-    `class` := "item",
     noscript(
       iframe(
         id := "remarkbox-iframe",
@@ -40,7 +39,7 @@ class CommentsView {
         |    var src = "https://my.remarkbox.com/embed?rb_owner_key=" + rb_owner_key + "&thread_uri=" + thread_uri;
         |    var ifrm = document.createElement("iframe");
         |    ifrm.setAttribute("id", "remarkbox-iframe");
-        |    ifrm.setAttribute("scrolling", "no");
+        |    ifrm.setAttribute("scrolling", "yes");
         |    ifrm.setAttribute("src", src);
         |    ifrm.setAttribute("frameborder", "0");
         |    ifrm.setAttribute("tabindex", "0");
