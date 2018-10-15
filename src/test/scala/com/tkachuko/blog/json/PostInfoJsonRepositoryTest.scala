@@ -14,7 +14,7 @@ object PostInfoJsonRepositoryTest extends TestSuite {
           |"tags" : [ "algorithms"] ,
           |"created" : 1.4682132E12
           |}]""".stripMargin
-      JsonRepository.postInfo.fromJson(json) ==> List(
+      PostInfoJsonRepository.multiple(json) ==> List(
         PostInfo(
           title = "Back to school: reverse bits",
           tags = List("algorithms"),

@@ -1,10 +1,19 @@
 package com.tkachuko.blog.frontend.router
 
-import com.tkachuko.blog.frontend.controllers.{Posts, PostsInfo}
 import com.tkachuko.blog.frontend.views.{BlogView, Index}
+import com.tkachuko.blog.http.HttpEndpoint
+import com.tkachuko.blog.json.{PostInfoJsonRepository, PostJsonRepository}
+import com.tkachuko.blog.repository.{HttpPostInfoRepository, HttpPostRepository, PostInfoRepository, PostRepository}
 import org.scalajs.dom._
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 object Router {
+
+  val postRepository: PostRepository =
+    HttpPostRepository(HttpEndpoint, PostJsonRepository)
+  val postInfoRepository: PostInfoRepository =
+    HttpPostInfoRepository(HttpEndpoint, PostInfoJsonRepository)
 
   val jsUrlSuffix = "#"
   val blogSuffix = s"$jsUrlSuffix/blog/"
@@ -17,10 +26,14 @@ object Router {
     url match {
       case ""                       => Index.render()
       case post if url.containsPost =>
-        post.title.foreach(title => Posts.loadOne(title)(BlogView.renderPosts))
+        post.title.foreach(title =>
+          postRepository.load(title).map(_.toList).foreach(BlogView.renderPosts)
+        )
       case tag if url.containsTag   =>
-        tag.tag.foreach(name => PostsInfo.loadWithTag(name)(BlogView.renderPostsInfo))
-      case _                        => PostsInfo.loadAll(BlogView.renderPostsInfo)
+        tag.tag.foreach(name =>
+          postInfoRepository.loadByTag(name).map(_.toList).foreach(BlogView.renderPostsInfo))
+      case _                        =>
+        postInfoRepository.load.map(_.toList).foreach(BlogView.renderPostsInfo)
     }
     url.renderAddressBar()
   }

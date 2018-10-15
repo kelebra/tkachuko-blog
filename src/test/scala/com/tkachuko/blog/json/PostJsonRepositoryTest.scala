@@ -18,7 +18,7 @@ object PostJsonRepositoryTest {
           |"tags" : [ "scala"]
           |}]
         """.stripMargin
-      JsonRepository.posts.fromJson(json) ==> List(
+      PostJsonRepository.multiple(json) ==> List(
         Post(
           title = "Mastering scala: Day 4",
           content = "hello!",
