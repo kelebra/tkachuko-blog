@@ -16,7 +16,10 @@ object Router {
     HttpPostInfoRepository(HttpEndpoint, PostInfoJsonRepository)
 
   val jsUrlSuffix = "#"
+
   val blogSuffix = s"$jsUrlSuffix/blog/"
+
+  val commentsSuffix = s"${jsUrlSuffix}comment"
 
   val postSuffix = s"${blogSuffix}post="
 
@@ -24,14 +27,15 @@ object Router {
 
   def apply(url: String): Unit = {
     url match {
-      case ""                       => Index.render()
-      case post if url.containsPost =>
+      case ""                       ⇒ Index.render()
+      case post if url.containsPost ⇒
         post.title.foreach(title =>
           postRepository.load(title).map(_.toList).foreach(BlogView.renderPosts)
         )
-      case tag if url.containsTag   =>
+      case tag if url.containsTag   ⇒
         tag.tag.foreach(name =>
           postInfoRepository.loadByTag(name).map(_.toList).foreach(BlogView.renderPostsInfo))
+      case _ if url.containsComment ⇒ Unit
       case _                        =>
         postInfoRepository.load.map(_.toList).foreach(BlogView.renderPostsInfo)
     }
@@ -56,6 +60,8 @@ object Router {
     def containsPost: Boolean = value contains postSuffix
 
     def containsTag: Boolean = value contains tagSuffix
+
+    def containsComment: Boolean = value contains commentsSuffix
 
     def title: Option[String] = value.split(postSuffix).lastOption
 
