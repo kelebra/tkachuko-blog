@@ -34,38 +34,11 @@ object Index {
       div(
         `class` := "ui middle aligned centered stackable grid container",
         div(
-          `class` := "ui three stackable cards",
-          experience,
+          `class` := "ui two stackable cards",
           info,
           github
         )
       )
-    )
-
-  def experience =
-    div(
-      `class` := "card",
-      div(
-        `class` := "content",
-        div(`class` := "header", "Comfortable with:"),
-        div(
-          `class` := "description",
-          div(
-            `class` := "ui centered list",
-            div(
-              `class` := "item",
-              i(`class` := "right aligned battery full icon"),
-              div(`class` := "content", s"Java (${1325397600000.0.readableDifference} experience)")
-            ),
-            div(
-              `class` := "item",
-              i(`class` := "right aligned battery high icon"),
-              div(`class` := "content", s"Scala (${1388556000000.0.readableDifference} experience)")
-            )
-          )
-        )
-      ),
-      div(`class` := "extra content", i(`class` := "check icon"), "Learn hard, have fun")
     )
 
   def info =
@@ -73,7 +46,7 @@ object Index {
       `class` := "card",
       div(
         `class` := "image",
-        img(src := "https://image.ibb.co/bXA7tT/Untitled.png")
+        img(src := "https://i.ibb.co/X2dTJv2/DSC-5307.jpg")
       ),
       div(
         `class` := "content",
