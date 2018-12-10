@@ -13,7 +13,7 @@ class CommentsView {
   }
 
   private def commentsContainer: Div =
-    div(id := "commento", style := "width: 100%").render
+    div(id := "commento").render
 
   private def setup: Script =
     script(src := "https://cdn.commento.io/js/commento.js").render
