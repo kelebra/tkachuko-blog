@@ -9,7 +9,6 @@ import scalatags.JsDom.all._
 object BlogView {
 
   def renderPosts(posts: List[Post]): Unit = render(() => {
-    println(posts)
     posts.map(PostView(_, posts.tail.isEmpty)).foreach(_.renderIn("posts".byId))
     posts.tags.map(TagView.apply).foreach(_.renderInText("sidebar".byId))
   })
