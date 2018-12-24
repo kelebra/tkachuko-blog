@@ -20,7 +20,7 @@ object Index {
         h1(`class` := "ui inverted header", "Simplicity is prerequisite for reliability"),
         h2("Edsger W. Dijkstra"),
         a(
-          `class` := "ui huge primary button",
+          `class` := "ui inverted huge primary button",
           onclick := Router.goToBlog,
           "Welcome to my blog",
           i(`class` := "right arrow icon")
